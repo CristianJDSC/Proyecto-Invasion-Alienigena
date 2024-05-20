@@ -2,7 +2,6 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string>
-//#include <ListasProyecto.h>
 #include <vector>
 #include <conio.h>
 #include <string.h>
