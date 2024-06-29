@@ -9,10 +9,15 @@
 #include <algorithm>
 #include <math.h>
 #include <iomanip>
+#include <fstream>
+#include <time.h>
 
 using namespace std;
 
 //Integrantes: Ana Rivas, Cristian De Sousa, Jose Ignacio Rivas
+
+//-------------------------------------------------------------------VECTOR DE LOS AMBIENTES------------------------------------------------------------------
+vector<string> vector_ambientes = {};
 
 //-------------------------------------------------------------------FUNCIONES DE MENUS------------------------------------------------------------------
 
@@ -27,6 +32,7 @@ void menuPrincipal(){
     cout << "2. Ambientes" << endl;
     cout << "3. Accesorios" << endl;
     cout << "4. Soldados intergalacticos" << endl;
+    cout << "5. Guerra Intergalactica" << endl;
     cout << "0. Salir" << endl;
     cout << "--------------------" << endl;
     cout << " Introduzca una opcion: ";
@@ -168,39 +174,19 @@ int obtenerPorcentaje() {  //valida entrada hasta que sea solo un numero >=1 y <
     }
 }
 
-char obtenerOpcionMenu0_3() {
+char obtenerOpcionMenu(char max) {
     while (true) {
         string entrada;
         cin >> entrada;
 
-        if (entrada.length() == 1 && (entrada[0] >= '0' && entrada[0] <= '3')) {
-            system("cls");
-            return entrada[0];
-        } else {
-            cout << "----------------------   PELIGRO   ------------------" << endl;
-            cout << "            El dato ingresado no es valido "  << endl;
-            cout << "        Por favor, verifique el dato a introducir :     " << endl;
-            cout << "Debe ser solo un caracter numerico entero positivo del 0 al 3     " << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            
-        }
-    }
-}
-
-char obtenerOpcionMenu0_4() {
-    while (true) {
-        string entrada;
-        cin >> entrada;
-
-        if (entrada.length() == 1 && (entrada[0] >= '0' && entrada[0] <= '4')) {
+        if (entrada.length() == 1 && (entrada[0] >= '0' && entrada[0] <= max)) {
             system("cls");
             return entrada[0];
         } else {
             cout << "----------------------   PELIGRO   ------------------" << endl;
             cout << "           El dato ingresado no es valido "  << endl;
             cout << "      Por favor, verifique el dato a introducir :     " << endl;
-            cout << "Debe ser solo un caracter numerico entero positivo, 1 o 2" << endl;
+            cout << "Debe ser solo un caracter numerico entero positivo del 0 al "<<max<< endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             
@@ -232,7 +218,7 @@ char obtenerOpcionRecurso() { //valida la opc de recursos (salud o energia) que 
 struct especie{
     string nombre;
     int energia;
-    int salud = 100;
+    int salud;
     string ambiente;
     struct especie *prox;
 };
@@ -240,18 +226,19 @@ typedef struct especie *especiePTR;
 
 especiePTR listaEspecie = NULL;
 
-especiePTR crearNodoEspecie(string nombre, int energia,  string ambiente){
+especiePTR crearNodoEspecie(string nombre, int energia, int salud,  string ambiente){
     especiePTR p;
     p = new(struct especie);
     p->nombre = nombre;
     p->energia = energia;
+    p->salud = salud;
     p->ambiente = ambiente;
     p->prox = NULL;
     return(p);
 }
 
-void RegistroListaEspecie(especiePTR &listaEspecie, string nombre, int energia, string ambiente){
-    especiePTR p = crearNodoEspecie(nombre, energia, ambiente);
+void RegistroListaEspecie(especiePTR &listaEspecie, string nombre, int energia, int salud, string ambiente){
+    especiePTR p = crearNodoEspecie(nombre, energia, salud, ambiente);
 	if(listaEspecie == NULL){
 		listaEspecie = p;
 	}
@@ -379,12 +366,17 @@ bool ExisteNombreAmbiente(vector<string>& vector_ambientes, string ambiente){
 
 void MostrarAmbientes(vector<string>& vector_ambientes){
     int vecsize = static_cast<int>(vector_ambientes.size());
-    cout << "       a m b i e n t e s" << endl;
-    cout << "--------------------------------------------------------------------------" << endl;
-    for (int l=0; l<vecsize; l++){
-        cout << "Ambiente N" << l+1 << ": " << vector_ambientes[l] << endl;
+    if (vector_ambientes.size()!=0){
+        cout << "       a m b i e n t e s" << endl;
+        cout << "--------------------------------------------------------------------------" << endl;
+        for (int l=0; l<vecsize; l++){
+            cout << "Ambiente N" << l+1 << ": " << vector_ambientes[l] << endl;
+        }
+        cout << "--------------------------------------------------------------------------" << endl;
+    }else{
+        cout << "Wow, la galaxia esta vacia :/... Aun no se ha creado ningun ambiente" << endl;
     }
-    cout << "--------------------------------------------------------------------------" << endl;
+    
 }
 
 void AgregarAmbiente(vector<string>& vector_ambientes, string ambiente){
@@ -394,89 +386,6 @@ void AgregarAmbiente(vector<string>& vector_ambientes, string ambiente){
         MostrarAmbientes(vector_ambientes);
     } else {
         cout << "El ambiente " << ambiente << " ya se encuentra registrado" << endl;
-    }
-}
-
-void EliminarAmbiente(vector<string>& vector_ambientes, especiePTR &listaEspecie){
-    int posicion; 
-    bool found = false;
-    string ambientemodif;
-    especiePTR p = listaEspecie;
-    int vecsize = static_cast<int>(vector_ambientes.size());
-
-    if (!vector_ambientes.empty()) {
-        
-        MostrarAmbientes(vector_ambientes);
-        cout << "Ingrese el numero N del ambiente que desea eliminar: "; posicion = obtenerEnteroPositivo();
-
-        for (int i = 0; i < vecsize; i++) {
-            if (i == posicion - 1) {
-                found = true;
-
-                //TOMO EN CUENTA LAS ESPECIES YA REGISTRADAS CON EL AMBIENTE QUE ACABAMOS DE ELIIMINAR:
-                if (listaEspecie != NULL) {
-                    while (p != NULL) {
-                        if (p->ambiente == vector_ambientes[i]) {
-                            system("cls");
-                            cout << "----------------------   PELIGRO   ------------------" << endl;
-                            cout << "        Este ambiente aun pertenece a una especie  "  << endl;
-                            cout << "          Por favor, reubique la especie...     " << endl;
-                            MostrarEspecie(p);
-                            cout << "Ingrese el nuevo ambiente de la especie: "; cin.ignore(); getline(cin, ambientemodif);
-                            if (!ExisteNombreAmbiente(vector_ambientes, ambientemodif)) {
-                                AgregarAmbiente(vector_ambientes, ambientemodif);
-                            }
-                            p->ambiente = ambientemodif;
-                        }
-                        p = p->prox;
-                    }
-                }
-                system("cls");
-                vector_ambientes.erase(vector_ambientes.begin() + i);
-                cout << "El ambiente ha sido eliminado" << endl;
-                break;
-            }
-        }
-        if (!found) {
-            cout << "El ambiente N" << posicion << " no se encuentra registrado" << endl;
-        }
-    } else {
-        cout << "No hay ambientes registrados..." << endl;
-    }
-}
-
-void ModificarAmbiente(vector<string>& vector_ambientes, especiePTR &listaEspecie, string ambiente){ //(en el vector)
-    int vecsize = static_cast<int>(vector_ambientes.size());
-    string ambientenew;
-    bool found;
-    for (int l=0; l<vecsize; l++){
-        if (vector_ambientes[l] == ambiente){
-            while (true){  //Ciclo para evitar ambientes repetidos dentro del vector
-                cout << "Ingrese el nuevo nombre del ambiente: "; getline(cin,ambientenew);
-                if (ExisteNombreAmbiente (vector_ambientes, ambientenew) ) {
-                    cout << "El ambiente " << ambientenew << " ya se encuentra registrado" << endl;
-                }
-                else {
-                    system("cls");
-                    vector_ambientes[l] = ambientenew;
-                    cout << "El ambiente '" << ambiente << "' ha sido modificado por '" << ambientenew << "'" << endl;
-                    //buscar en lista p ambiente
-                    especiePTR p = listaEspecie;
-                    while (p != NULL) {
-                        if (p->ambiente == ambiente ) {
-                            p->ambiente = ambientenew;
-                            cout << "El ambiente tambien ha sido modificado en la especie '" << p->nombre << "'." << endl;
-                        }
-                        p = p->prox;
-                    }
-                    break;
-                }
-            }
-            found = true;
-        }
-    }
-    if (!found){
-        cout << "El ambiente " << ambiente << " no se encuentra registrado" << endl;
     }
 }
 
@@ -626,31 +535,155 @@ string ValidarNombreAccesorio (accesorioPTR &listaAccesorio) {
     }
 }
 
+//-------------------------------------------------------FUNCION DE ELIMINACION Y MODIFICACION DE AMBIENTES-------------------------------------------------------------------------
+void EliminarAmbiente(vector<string>& vector_ambientes, especiePTR &listaEspecie, accesorioPTR &listaAccesorio){
+    int posicion; 
+    bool found = false;
+    string ambientemodif;
+    especiePTR p = listaEspecie;
+    accesorioPTR q = listaAccesorio;
+    int vecsize = static_cast<int>(vector_ambientes.size());
+
+    if (!vector_ambientes.empty()) {
+        
+        MostrarAmbientes(vector_ambientes);
+        cout << "Ingrese el numero N del ambiente que desea eliminar: "; posicion = obtenerEnteroPositivo();
+
+        for (int i = 0; i < vecsize; i++) {
+            if (i == posicion - 1) {
+                found = true;
+
+                //TOMO EN CUENTA LAS ESPECIES YA REGISTRADAS CON EL AMBIENTE QUE ACABAMOS DE ELIIMINAR:
+                if (listaEspecie != NULL) {
+                    while (p != NULL) {
+                        if (p->ambiente == vector_ambientes[i]) {
+                            system("cls");
+                            cout << "----------------------   PELIGRO   ------------------" << endl;
+                            cout << "        Este ambiente aun pertenece a una especie  "  << endl;
+                            cout << "          Por favor, reubique la especie...     " << endl;
+                            MostrarEspecie(p);
+                            cin.clear();
+                            cin.sync(); 
+                            cout << "Ingrese el nuevo ambiente de la especie: ";  getline(cin, ambientemodif);
+                            if (!ExisteNombreAmbiente(vector_ambientes, ambientemodif)) {
+                                AgregarAmbiente(vector_ambientes, ambientemodif);
+                            }
+                            p->ambiente = ambientemodif;
+                            cout << endl << "La especie ha sido modificada" << endl;
+                            system("PAUSE");
+                        }
+                        p = p->prox;
+                    }
+                }
+
+                if (listaAccesorio!=NULL){
+                    while (q != NULL) {
+                        if (q->tipo_valor == vector_ambientes[i]) {
+                            system("cls");
+                            cout << "---------------------------   PELIGRO   ---------------------------" << endl;
+                            cout << "  Este ambiente aun pertenece a un accesorio de acondicionamiento  "  << endl;
+                            cout << "               Por favor, asigne un nuevo ambiente ...     " << endl;
+                            MostrarAccesorio(q);
+                            cin.clear();
+                            cin.sync(); 
+                            cout << "Ingrese el nuevo ambiente del accesorio: "; getline(cin, ambientemodif);
+                            if (!ExisteNombreAmbiente(vector_ambientes, ambientemodif)) {
+                                AgregarAmbiente(vector_ambientes, ambientemodif);
+                            }
+                            q->tipo_valor = ambientemodif;
+                            cout << endl << "El accesorio ha sido modificado" << endl;
+                            system("PAUSE");
+                        }
+                        q = q->prox;
+                    }
+                }
+
+                system("cls");
+                vector_ambientes.erase(vector_ambientes.begin() + i);
+                cout << "El ambiente ha sido eliminado" << endl;
+                break;
+            }
+        }
+        if (!found) {
+            cout << "El ambiente N" << posicion << " no se encuentra registrado" << endl;
+        }
+    } else {
+        cout << "No hay ambientes registrados..." << endl;
+    }
+}
+
+void ModificarAmbiente(vector<string>& vector_ambientes, especiePTR &listaEspecie, accesorioPTR &listaAccesorio, string ambiente){ //(en el vector)
+    int vecsize = static_cast<int>(vector_ambientes.size());
+    string ambientenew;
+    bool found;
+    for (int l=0; l<vecsize; l++){
+        if (vector_ambientes[l] == ambiente){
+            while (true){  //Ciclo para evitar ambientes repetidos dentro del vector
+                cout << "Ingrese el nuevo nombre del ambiente: "; getline(cin,ambientenew);
+                if (ExisteNombreAmbiente (vector_ambientes, ambientenew) ) {
+                    cout << "El ambiente " << ambientenew << " ya se encuentra registrado" << endl;
+                }
+                else {
+                    system("cls");
+                    vector_ambientes[l] = ambientenew;
+                    cout << "El ambiente '" << ambiente << "' ha sido modificado por '" << ambientenew << "'" << endl;
+                    //buscar en lista p ambiente
+                    especiePTR p = listaEspecie;
+                    while (p != NULL) {
+                        if (p->ambiente == ambiente ) {
+                            p->ambiente = ambientenew;
+                            cout << "El ambiente tambien ha sido modificado en la especie '" << p->nombre << "'." << endl;
+                        }
+                        p = p->prox;
+                    }
+                    //buscar en lista q accesorio
+                    accesorioPTR q = listaAccesorio;
+                    while (q != NULL) {
+                        if (q->tipo_valor == ambiente ) {
+                            q->tipo_valor = ambientenew;
+                            cout << "El ambiente tambien ha sido modificado en el accesorio '" << q->nombre << "'." << endl;
+                        }
+                        q = q->prox;
+                    }
+                    break;
+                }
+            }
+            found = true;
+        }
+    }
+    if (!found){
+        cout << "El ambiente " << ambiente << " no se encuentra registrado" << endl;
+    }
+}
+
 //------------------------------------------------------------------------------TODO DE SOLDADOS-------------------------------------------------------------------------
 especiePTR ObtenerEspecie () {
     especiePTR p;
-    int cont, posicion; cont = 0;
+    int cont, posicion; 
     bool found = false;
 
     cout << "Un vistazo a las especies..." << endl;
     MostrarEspecies(listaEspecie);
 
     if (listaEspecie != NULL) {
-        cout << "Escriba el numero N de la especie que desea asignar al soldado: "; posicion = obtenerEnteroPositivo();
-        p = listaEspecie;
-        while (p != NULL) {
-            cont++;
-            if (cont == posicion) {
-                found = true;
-                return (p);
+        while(!found){
+            cont = 0;
+            cout << "Escriba el numero N de la especie que desea asignar al soldado: "; posicion = obtenerEnteroPositivo();
+            p = listaEspecie;
+            while (p != NULL) {
+                cont++;
+                if (cont == posicion) {
+                    found = true;
+                    return (p);
+                }
+                p = p->prox;
             }
-            p = p->prox;
-        }
-        if (!found) {
-            cout << "Parece que la especie N" << posicion << " no existe... Intentelo de nuevo" << endl;
+            if (!found) {
+                cout << "Parece que la especie N" << posicion << " no existe... Intentelo de nuevo" << endl;
+            }
         }
     }
-    return (p);
+    
 }
 
 accesorioPTR ObtenerAccesorio (accesorioPTR &listaAccesorio) {
@@ -684,6 +717,8 @@ accesorioPTR ObtenerAccesorio (accesorioPTR &listaAccesorio) {
 struct soldado {
     string nombre;
     especiePTR especie;
+    int salud;
+    int energia;
     accesorioPTR mochila[5];
     struct soldado *prox;
 };
@@ -703,6 +738,8 @@ soldadoPTR crearNodoSoldado (string nombre) {
     p = new (struct soldado);
     p->nombre = nombre;
     p->especie = ObtenerEspecie();
+    p->salud=(p->especie)->salud;
+    p->energia=(p->especie)->energia;
     EmpacarMochila(p);
     p->prox = NULL;
     return(p);
@@ -729,7 +766,6 @@ void MostrarMochila (soldadoPTR &p) {
         } else {
             cout << right << setw(50) << setfill(' ') << i+1 << "- Espacio sin objeto" << endl;
         }
-        
     }
 }
 
@@ -754,32 +790,51 @@ void MostrarSoldados(soldadoPTR &listaSoldados){
         soldadoPTR t = listaSoldados;
         cout << "       s o l d a d o s   i n t e r g a l a c t i c o s" << endl;
         cout << endl;
-        cout << "--------------------------------------------------------------------------" << endl;
+        cout << "------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
-        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << endl;
+        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
         cout << endl;
         while(t != NULL){
             cout << "Soldado N" << cont << endl;
             cout << left << setw(20) << setfill(' ') << t->nombre;
             MostrarDatosEspecie(t->especie);
             MostrarMochila(t);
+            cout << right << setw(81) << setfill(' ') <<t->salud << right << setw(13) << setfill(' ') <<t->energia;
             cout << endl;
             t = t->prox;
             cont = cont + 1;
         }
-        cout << "--------------------------------------------------------------------------" << endl;
+        cout << "------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
     }
 }
 
 void MostrarSoldado (soldadoPTR &t) {
     cout << endl;
-    cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << endl;
+    cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(16) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+    cout << endl;
+    cout << endl;;
     cout << endl;
     cout << left << setw(20) << setfill(' ') << t->nombre;
     MostrarDatosEspecie(t->especie);
     MostrarMochila(t);
+    cout << left << setw(20) << setfill(' ') <<t->salud << left << setw(20) << setfill(' ') <<t->energia;
     cout << endl;
+}
+
+int ContarSoldados(soldadoPTR &listaSoldados){
+    int cont;
+    if(listaSoldados == NULL){
+		cont=0;
+	}
+    else {
+        soldadoPTR t = listaSoldados;
+        while(t != NULL){
+            t = t->prox;
+            cont = cont + 1;
+        }
+    }
+    return cont;
 }
 
 bool ExisteNombreSoldado(soldadoPTR &listaSoldados, string nombre){
@@ -852,6 +907,24 @@ void EliminarSoldado (soldadoPTR &listaSoldados) {
     } 
 }
 
+/*void RecuperarRecursos(soldadoPTR &listaSoldados){
+    soldadoPTR p;
+
+    if (listaSoldados != NULL) {
+        p = listaSoldados;
+        
+
+        while (p != NULL) {
+            if (p->descanso) {
+                p->salud+=(5*p->salud/100);
+                p->energia+=(5*p->energia/100);
+            }
+            
+            p = p->prox;
+        }
+    } 
+}*/
+
 //-----------------------------------------------------------FUNCION DE MODIFICACION GRAL DE ESPECIES------------------------------------------------------------------
 
 void ModificarDatosEspecie(especiePTR &listaEspecie, vector<string> &vector_ambientes) {
@@ -880,7 +953,7 @@ void ModificarDatosEspecie(especiePTR &listaEspecie, vector<string> &vector_ambi
                     cout << " [3] Ambiente " << endl;
                     cout << " [0] Nada, quiero volver... " << endl;
                     cout << "Elija una opcion: ";
-                    opc = obtenerOpcionMenu0_3();
+                    opc = obtenerOpcionMenu('3');
 
                     switch (opc){
 
@@ -956,7 +1029,7 @@ void ModificarAccesorio (accesorioPTR &listaAccesorio, vector<string> &vector_am
                     cout << " [3] Tipo " << endl;
                     cout << " [0] Nada, quiero volver... " << endl;
                     cout << "Elija una opcion: ";
-                    opc = obtenerOpcionMenu0_3();
+                    opc = obtenerOpcionMenu('3');
 
                     switch (opc) {
                         case '1':
@@ -977,7 +1050,7 @@ void ModificarAccesorio (accesorioPTR &listaAccesorio, vector<string> &vector_am
                         menuTipos = true;
                         do {
                             menuAccesoriosTipos();
-                            opcTipo = obtenerOpcionMenu0_4();
+                            opcTipo = obtenerOpcionMenu('4');
 
                             switch (opcTipo)  {
 
@@ -1067,7 +1140,7 @@ void ModificarMochila (soldadoPTR &p, vector<string> &vector_ambientes) {
         cout << " [3] Modificar un objeto " << endl;
         cout << " [0] Nada, quiero volver... " << endl;
         cout << "Elija una opcion: ";
-        opc = obtenerOpcionMenu0_3();
+        opc = obtenerOpcionMenu('3');
 
         switch (opc) {
             case '1':
@@ -1145,7 +1218,7 @@ void ModificarSoldado (soldadoPTR &listaSoldados, vector<string> &vector_ambient
                     cout << " [3] Mochila " << endl;
                     cout << " [0] Nada, quiero volver... " << endl;
                     cout << "Elija una opcion: ";
-                    opc = obtenerOpcionMenu0_3();
+                    opc = obtenerOpcionMenu('3');
 
                     switch (opc) {
                         case '1':
@@ -1279,26 +1352,527 @@ void EliminarAccesorio(accesorioPTR &listaAccesorio){
     }
 }
 
-//-------------------------------------------------------------------INICIO DEL MAIN---------------------------------------------------------------------------
 
+//-------------------------------------------------------------------LEER ARCHIVOS---------------------------------------------------------------------------
+string GuardarDato(string texto){
+    bool take=false;
+    string aux, dato;
+    for (int i=0;i<texto.size();i++){
+        if(take==true){
+            aux +=texto[i];
+        }
+        else if(texto[i]==':'){
+            take=true;
+        }
+    }
+    dato=aux;
+    aux="";
+    take=false;
+    return dato;
+}
+
+
+void AlmacenarDatosEspecie(){
+    ifstream archivo;
+    string linea, nombre, ambiente, energia, salud;
+    int cont;
+
+    archivo.open("especies.inv", ios::in);
+
+    while(!archivo.eof()){
+        getline(archivo,linea);
+        if (cont==1){
+            nombre=linea;
+            cont+=1;
+        }
+        else if (cont==2){
+            energia=GuardarDato(linea);
+            cont+=1;
+        }else if (cont==3){
+            salud=GuardarDato(linea);
+            cont+=1;
+        }else if (cont==4){
+            ambiente=linea;
+            cont+=1;
+        }
+        
+        if(linea[0]=='-'){
+            cont=1;
+        }
+        if(cont==5){
+            RegistroListaEspecie(listaEspecie, nombre, stoi(energia), stoi(salud), ambiente);
+        }
+    }
+    archivo.close();
+}
+
+
+void AlmacenarDatosAmbiente(){
+    ifstream archivo;
+    string linea;
+    int cont;
+    bool repetido=false;
+
+    archivo.open("ambiente.inv", ios::in);
+
+    while(!archivo.eof()){
+        getline(archivo,linea);
+        if (cont==1){
+            for(int i=0; i<vector_ambientes.size();i++){
+                if(linea==vector_ambientes[i]){
+                    repetido=true;
+                    break;
+                }
+            }
+            if(repetido==false){
+                vector_ambientes.push_back(linea);
+            }
+            repetido=false;
+            cont+=1;
+        }
+        
+        if(linea[0]=='-'){
+            cont=1;
+        }
+    }
+    archivo.close();
+}
+
+
+void AlmacenarDatosAccesorio(){
+    ifstream archivo;
+    string linea, nombre, tipo, tipo_valor, valor, energia, contenedor_str;
+    int cont, contenedor;
+
+    archivo.open("accesorios.inv", ios::in);
+
+    while(!archivo.eof()){
+        getline(archivo,linea);
+        if (cont==1){
+            nombre=linea;
+            cont+=1;
+        }else if (cont==2){
+            tipo=GuardarDato(linea);
+            cont+=1;
+        }else if (cont==3){
+            valor=GuardarDato(linea);
+            cont+=1;
+        }else if (cont==4){
+            tipo_valor=GuardarDato(linea);
+            if(tipo_valor==""){
+                tipo_valor="0";
+            }
+            cont+=1;
+        }else if (cont==5){
+            energia=GuardarDato(linea);
+            cont+=1;
+        }else if (cont==6){
+            contenedor_str=GuardarDato(linea);
+            contenedor=stoi(contenedor_str);
+            cont+=1;
+        }
+        
+        if(linea[0]=='-'){
+            cont=1;
+        }
+        if(cont>6){
+            RegistroListaAccesorio(listaAccesorio, nombre, tipo, stoi(valor), tipo_valor, stoi(energia), contenedor);
+        }
+    }
+    archivo.close();
+}
+
+//-------------------------------------------------------------------FUNCIONES GUERRA---------------------------------------------------------------------------
+struct jugador1 {
+    string nombre;
+    especiePTR especie;
+    int salud;
+    int energia;
+    accesorioPTR mochila[5];
+    accesorioPTR mochila_combate[3];
+    bool descanso;
+    struct jugador1 *prox;
+    };
+
+typedef struct jugador1 *jugador1PTR;
+jugador1PTR listaJugador1 = NULL;
+
+struct jugador2 {
+    string nombre;
+    especiePTR especie;
+    int salud;
+    int energia;
+    accesorioPTR mochila[5];
+    accesorioPTR mochila_combate[3];
+    bool descanso;
+    struct jugador2 *prox;
+    };
+
+typedef struct jugador2 *jugador2PTR;
+jugador2PTR listaJugador2 = NULL;
+
+
+
+int GenerarAmbiente(){
+    srand(time(NULL));
+    int limite=vector_ambientes.size()-1;
+    return (rand() % (limite+1));
+}
+
+void GenerarSoldadosJugador1(soldadoPTR &listaSoldados){
+    srand(time(NULL));
+    int limite;
+    int cont, num_soldado;
+
+    cout<<"A continuacion se muestran los soldados que fueron asignados al jugador 1. "; system ("PAUSE");
+    system("cls");
+    cout << "       s o l d a d o s   j u g a d o r  1" << endl;
+    cout << endl;
+    cout << "------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+    cout << endl;
+
+    for (int i=1; i<4; i++){
+        limite=ContarSoldados(listaSoldados);
+        num_soldado=rand() % limite+1;
+        cont=1;
+        soldadoPTR s, ant;
+        s=listaSoldados;
+        while(true){
+            if(cont==num_soldado){
+                cout << "Soldado N" << i << endl;
+                cout << left << setw(20) << setfill(' ') << s->nombre;
+                MostrarDatosEspecie(s->especie);
+                MostrarMochila(s);
+                cout << right << setw(81) << setfill(' ') <<s->salud << right << setw(13) << setfill(' ') <<s->energia;
+                cout << endl;
+                if (s == listaSoldados) {
+                    listaSoldados = listaSoldados->prox;
+                } else {
+                    ant->prox = s->prox;
+                }
+                
+                jugador1PTR p;
+                p = new (struct jugador1);
+                p->nombre = s->nombre;
+                p->especie = s->especie;
+                p->salud=s->salud;
+                p->energia=s->energia;
+                for (int i=0; i<5;i++){
+                    p->mochila[i]=s->mochila[i];
+                }
+                p->prox = NULL;
+                if(listaJugador1 == NULL){
+                    listaJugador1 = p;
+                }
+                else {
+                    jugador1PTR t = listaJugador1;
+                    while(t->prox != NULL){
+                        t= t->prox;
+                    }
+                    t->prox = p;
+                }
+                delete(s);
+                break;
+            }
+            cont += 1;
+            ant = s;
+            s = s->prox;
+        }
+    }
+    cout << "------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+}
+
+void GenerarSoldadosJugador2(soldadoPTR &listaSoldados){
+    srand(time(NULL));
+    int limite;
+    int cont, num_soldado;
+
+    cout<<"A continuacion se muestran los soldados que fueron asignados al jugador 2. "; system ("PAUSE");
+    system("cls");
+    cout << "       s o l d a d o s   j u g a d o r  2" << endl;
+    cout << endl;
+    cout << "------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+    cout << endl;
+
+    for (int i=1; i<4; i++){
+        limite=ContarSoldados(listaSoldados);
+        num_soldado=rand() % limite+1;
+        cont=1;
+        soldadoPTR s, ant;
+        s=listaSoldados;
+        while(true){
+            if(cont==num_soldado){
+                cout << "Soldado N" << i << endl;
+                cout << left << setw(20) << setfill(' ') << s->nombre;
+                MostrarDatosEspecie(s->especie);
+                MostrarMochila(s);
+                cout << right << setw(81) << setfill(' ') <<s->salud << right << setw(13) << setfill(' ') <<s->energia;
+                cout << endl;
+                if (s == listaSoldados) {
+                    listaSoldados = listaSoldados->prox;
+                } else {
+                    ant->prox = s->prox;
+                }
+                
+                jugador2PTR q;
+                q = new (struct jugador2);
+                q->nombre = s->nombre;
+                q->especie = s->especie;
+                q->salud=s->salud;
+                q->energia=s->energia;
+                for (int i=0; i<5;i++){
+                    q->mochila[i]=s->mochila[i];
+                }
+                q->prox = NULL;
+                if(listaJugador2 == NULL){
+                    listaJugador2 = q;
+                }
+                else {
+                    jugador2PTR t = listaJugador2;
+                    while(t->prox != NULL){
+                        t= t->prox;
+                    }
+                    t->prox = q;
+                }
+                delete(s);
+                break;
+            }
+            cont += 1;
+            ant = s;
+            s = s->prox;
+        }
+    }
+    cout << "------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl; system ("PAUSE");
+}
+
+bool GenerarPrioridad(){
+    srand(time(NULL));
+    int num_jugador=rand() % 2+1;
+    
+    if(num_jugador==1){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+void MostrarMochilaJugador1 (jugador1PTR &p) {
+    for (int i = 0; i<5; i++ ) {
+        if (p->mochila[i] != NULL) {
+            cout << right << setw(50) << setfill(' ') << i+1 << "- " << p->mochila[i]->nombre << endl;
+        } else {
+            cout << right << setw(50) << setfill(' ') << i+1 << "- Espacio sin objeto" << endl;
+        }
+    }
+}
+
+
+void MostrarSoldadosJugador1(jugador1PTR &listaJugador1){
+    int cont = 1;
+    
+        jugador1PTR t = listaJugador1;
+        cout << "       s o l d a d o s   J u g a d o r  1" << endl;
+        cout << endl;
+        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << endl;
+        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+        cout << endl;
+        while(t != NULL){
+            cout << "Soldado N" << cont << endl;
+            cout << left << setw(20) << setfill(' ') << t->nombre;
+            MostrarDatosEspecie(t->especie);
+            MostrarMochilaJugador1(t);
+            cout << right << setw(81) << setfill(' ') <<t->salud << right << setw(13) << setfill(' ') <<t->energia;
+            cout << endl;
+            t = t->prox;
+            cont = cont + 1;
+        }
+        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << endl;
+    
+}
+
+jugador1PTR SeleccionarSoldadoJugador1 (jugador1PTR &listaJugador1) {
+    jugador1PTR p;
+    int cont, posicion; cont = 0;
+    bool found = false;
+    
+    MostrarSoldadosJugador1(listaJugador1);
+
+    if (listaJugador1 != NULL) {
+        
+        while(!found){
+            cout << "Ingrese el numero N del soldado que desea seleccionar: "; posicion = obtenerEnteroPositivo();
+            p = listaJugador1;
+            while (p != NULL) {
+                cont++;
+                if (cont == posicion) {
+                    found = true;
+                    cout << "El soldado N"<<cont<<" ha sido sleccionado" << endl;
+                    return p;
+                }
+                p = p->prox;
+            }
+            if (!found) {
+                cout << "El soldado N" << posicion << " no se encuentra registrado" << endl;
+                cont=0;
+            }
+        }
+        
+    } 
+}
+
+void seleccionarAccesoriosJugador1(jugador1PTR &p, int num_combate){
+    int posicion, cont;
+    bool found;
+    cout<<"Ahora debe escoger los TRES objetos que llevara a la batalla"<<endl;
+    
+    for (int i=0;i<3;i++){
+        cont=1;
+        found=false;
+        while(!found){
+            cout<<"ingrese el numero N del accesorio N"<<i+1<<" que llevara al combate N"<<num_combate<<": "; posicion = obtenerEnteroPositivo();
+            while (cont!=6) {
+                if (cont == posicion) {
+                    found = true;
+                    cout << "El accesorio N"<<cont<<" ha sido sleccionado" << endl;
+                    p->mochila_combate[i]=p->mochila[cont];
+                    break;
+                }
+                cont++;
+            }
+            if (!found) {
+                cout << "El accesorio N" << posicion << " no se encuentra registrado" << endl;
+                cont=0;
+            }
+        }
+        
+    }
+}
+
+void MostrarMochilaJugador2 (jugador2PTR &q) {
+    for (int i = 0; i<5; i++ ) {
+        if (q->mochila[i] != NULL) {
+            cout << right << setw(50) << setfill(' ') << i+1 << "- " << q->mochila[i]->nombre << endl;
+        } else {
+            cout << right << setw(50) << setfill(' ') << i+1 << "- Espacio sin objeto" << endl;
+        }
+    }
+}
+
+
+void MostrarSoldadosJugador2(jugador2PTR &listaJugador2){
+    int cont = 1;
+    
+        jugador2PTR t = listaJugador2;
+        cout << "       s o l d a d o s   J u g a d o r  2" << endl;
+        cout << endl;
+        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << endl;
+        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+        cout << endl;
+        while(t != NULL){
+            cout << "Soldado N" << cont << endl;
+            cout << left << setw(20) << setfill(' ') << t->nombre;
+            MostrarDatosEspecie(t->especie);
+            MostrarMochilaJugador2(t);
+            cout << right << setw(81) << setfill(' ') <<t->salud << right << setw(13) << setfill(' ') <<t->energia;
+            cout << endl;
+            t = t->prox;
+            cont = cont + 1;
+        }
+        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << endl;
+    
+}
+
+jugador2PTR SeleccionarSoldadoJugador2 (jugador2PTR &listaJugador2) {
+    jugador2PTR q;
+    int cont, posicion; cont = 0;
+    bool found = false;
+    
+    MostrarSoldadosJugador2(listaJugador2);
+
+    if (listaJugador2 != NULL) {
+
+        while(!found){
+            cout << "Ingrese el numero N del soldado que desea seleccionar: "; posicion = obtenerEnteroPositivo();
+            q = listaJugador2;
+            while (q != NULL) {
+                cont++;
+                if (cont == posicion) {
+                    found = true;
+                    cout << "El soldado N"<<cont<<" ha sido sleccionado" << endl;
+                    return q;
+                }
+                q = q->prox;
+            }
+            if (!found) {
+                cout << "El soldado N" << posicion << " no se encuentra registrado" << endl;
+                cont=0;
+            }
+        }
+        
+    } 
+}
+
+void seleccionarAccesoriosJugador2(jugador2PTR &q, int num_combate){
+    int posicion, cont;
+    bool found;
+    cout<<"Ahora debe escoger los TRES objetos que llevara a la batalla"<<endl;
+    
+    for (int i=0;i<3;i++){
+        cont=1;
+        found=false;
+        while(!found){
+            cout<<"ingrese el numero N del accesorio N"<<i+1<<" que llevara al combate N"<<num_combate<<": "; posicion = obtenerEnteroPositivo();
+            while (cont!=6) {
+                if (cont == posicion) {
+                    found = true;
+                    cout << "El accesorio N"<<cont<<" ha sido sleccionado" << endl;
+                    q->mochila_combate[i]=q->mochila[cont];
+                    break;
+                }
+                cont++;
+            }
+            if (!found) {
+                cout << "El accesorio N" << posicion << " no se encuentra registrado" << endl;
+                cont=0;
+            }
+        }
+        
+    }
+}
+
+//-------------------------------------------------------------------INICIO DEL MAIN---------------------------------------------------------------------------
 int main() {
     //Variables para: especies, ambientes, accesorios, menus...
-    int energia, valor, contenedor;
+    int energia, salud, valor, contenedor;
     string nombre, ambiente, tipo, tipo_valor;
-    vector<string> vector_ambientes = {"Tierra", "Caluroso", "Frio"};
     bool menuTipos; 
     char opcionMenuPrincipal, opcionMenuEspecies, opcionMenuAmbientes, opcionMenuAccesorios, opcionTipoAcc, opcionRecurso, opcionMenuSoldados;
 
+    AlmacenarDatosEspecie();
+    AlmacenarDatosAmbiente();
+    AlmacenarDatosAccesorio();
+
     do {
         menuPrincipal();
-        opcionMenuPrincipal = obtenerOpcionMenu0_4();
+        opcionMenuPrincipal = obtenerOpcionMenu('5');
 
         switch (opcionMenuPrincipal) {
 
+            //OPCION ESPECIES
             case '1':
             do {
                 menuEspecies();
-                opcionMenuEspecies = obtenerOpcionMenu0_4();
+                opcionMenuEspecies = obtenerOpcionMenu('4');
 
                 switch (opcionMenuEspecies) {
                     case '1':
@@ -1311,9 +1885,10 @@ int main() {
                     system ("cls");
                     nombre = ValidarNombreEspecie(listaEspecie);
                     cout << "Ingrese la energia: "; energia = obtenerEnteroPositivo();
+                    cout << "Ingrese la salud: "; salud = obtenerEnteroPositivo();
                     MostrarAmbientes(vector_ambientes);
                     if (!vector_ambientes.empty()) {
-                        RegistroListaEspecie(listaEspecie, nombre, energia, ConsultarAmbiente(vector_ambientes));
+                        RegistroListaEspecie(listaEspecie, nombre, energia, salud, ConsultarAmbiente(vector_ambientes));
                         cout << "La especie " << nombre << " ha sido aniadida" << endl;
                     } else {
                         cout << "No se encuentra ningun ambiente registrado. Agregue al menos uno e intentelo de nuevo" << endl;
@@ -1336,10 +1911,11 @@ int main() {
             } while(opcionMenuEspecies != '0');
             break;
 
+            //OPCION AMBIENTES
             case '2':
             do {
                 menuAmbientes();
-                opcionMenuAmbientes = obtenerOpcionMenu0_4();
+                opcionMenuAmbientes = obtenerOpcionMenu('4');
 
                 switch (opcionMenuAmbientes) {
 
@@ -1358,23 +1934,24 @@ int main() {
                     
                     case '3':
                     system("cls");
-                    EliminarAmbiente(vector_ambientes, listaEspecie);
+                    EliminarAmbiente(vector_ambientes, listaEspecie, listaAccesorio);
                     system("PAUSE");
                     break;
 
                     case '4':
                     cin.ignore(); cout << "Ingrese el ambiente que desea modificar: "; getline(cin,ambiente);
-                    ModificarAmbiente(vector_ambientes, listaEspecie, ambiente);
+                    ModificarAmbiente(vector_ambientes, listaEspecie, listaAccesorio, ambiente);
                     system("PAUSE");
                     break;
                 }
             }while (opcionMenuAmbientes != '0');
             break;
 
+            //OPCION ACCESORIOS
             case '3':
             do {
                 menuAccesorios();
-                opcionMenuAccesorios = obtenerOpcionMenu0_4();
+                opcionMenuAccesorios = obtenerOpcionMenu('4');
 
                 switch(opcionMenuAccesorios) {
 
@@ -1391,7 +1968,7 @@ int main() {
                     menuTipos = true;
                     do {
                         menuAccesoriosTipos();
-                        opcionTipoAcc = obtenerOpcionMenu0_4();
+                        opcionTipoAcc = obtenerOpcionMenu('4');
 
                         switch (opcionTipoAcc)  {
 
@@ -1467,45 +2044,109 @@ int main() {
             } while(opcionMenuAccesorios != '0');
             break;
 
+            //OPCION SOLDADOS
             case '4':
-            do {
-                menuSoldados();
-                opcionMenuSoldados = obtenerOpcionMenu0_4();
+                do {
+                    menuSoldados();
+                    opcionMenuSoldados = obtenerOpcionMenu('4');
 
-                switch (opcionMenuSoldados) {
-                    case '1':
-                    system("cls");
-                    MostrarSoldados(listaSoldados);
-                    system ("PAUSE");
-                    break;
-
-                    case '2':
-                    system ("cls");
-                    if (RequisitosSoldado(listaEspecie, listaAccesorio, vector_ambientes)) {
-                        cout << "***e n l i s t a r   s o l d a d o ***" << endl; cout << endl;
-                        nombre = ValidarNombreSoldado(listaSoldados);
-                        RegistroListaSoldados(listaSoldados, nombre);
-                        system ("cls");
-                        cout << "El soldado " << nombre << " ha sido reclutado!" << endl; cout << endl;
+                    switch (opcionMenuSoldados) {
+                        case '1':
+                        system("cls");
                         MostrarSoldados(listaSoldados);
+                        system ("PAUSE");
+                        break;
+
+                        case '2':
+                        system ("cls");
+                        if (RequisitosSoldado(listaEspecie, listaAccesorio, vector_ambientes)) {
+                            cout << "***e n l i s t a r   s o l d a d o ***" << endl; cout << endl;
+                            nombre = ValidarNombreSoldado(listaSoldados);
+                            RegistroListaSoldados(listaSoldados, nombre);
+                            system ("cls");
+                            cout << "El soldado " << nombre << " ha sido reclutado!" << endl; cout << endl;
+                            MostrarSoldados(listaSoldados);
+                        }
+                        system ("PAUSE");
+                        break;
+
+                        case '3':
+                        system ("cls");
+                        EliminarSoldado(listaSoldados);
+                        system ("PAUSE");
+                        break;
+
+                        case '4':
+                        system ("cls");
+                        ModificarSoldado(listaSoldados, vector_ambientes);
+                        system ("PAUSE");
+                        break;
                     }
+                } while (opcionMenuSoldados != '0');
+                break;
+            
+            //OPCION GUERRA
+            case '5':
+                if (ContarSoldados(listaSoldados)<6){
+                    cout<<"No existen soldados suficientes para iniciar la guerra. Deben existir por lo menos 6 soldados"<<endl;
                     system ("PAUSE");
                     break;
-
-                    case '3':
+                }else{
+                    string ambiente_guerra=vector_ambientes[GenerarAmbiente()];
+                    cout<<"La guerra se disputara en el ambiente: "<<ambiente_guerra<<endl;
+                    system ("PAUSE"); 
                     system ("cls");
-                    EliminarSoldado(listaSoldados);
-                    system ("PAUSE");
-                    break;
-
-                    case '4':
+                    GenerarSoldadosJugador1(listaSoldados);
+                    GenerarSoldadosJugador2(listaSoldados);
                     system ("cls");
-                    ModificarSoldado(listaSoldados, vector_ambientes);
-                    system ("PAUSE");
-                    break;
+                    cout<<"A continuacion se sorteara el jugador que comenzara atacando. "; system ("PAUSE"); 
+                    bool prioridad=GenerarPrioridad();
+
+                    int num_combate=1;
+                    while(true){
+                        if (prioridad){
+                            cout<<"El primer ataque del combate "<<num_combate<<" sera realizado por el jugador 1"<<endl;
+                            system ("PAUSE"); 
+                            MostrarSoldadosJugador1(listaJugador1);
+                            jugador1PTR soldado_jugador1=SeleccionarSoldadoJugador1(listaJugador1);
+                            seleccionarAccesoriosJugador1(soldado_jugador1, num_combate);
+                            system ("PAUSE");
+                            system ("cls");
+                            
+                            cout<<"El jugador 2 iniciara a la defensiva"<<endl;
+                            system ("PAUSE"); 
+                            MostrarSoldadosJugador2(listaJugador2);
+                            jugador2PTR soldado_jugador2=SeleccionarSoldadoJugador2(listaJugador2);
+                            seleccionarAccesoriosJugador2(soldado_jugador2, num_combate);
+                            system ("PAUSE");
+                            system ("cls");
+                        }else{
+                            cout<<"El primer ataque del combate "<<num_combate<<" sera realizado por el jugador 2"<<endl;
+                            system ("PAUSE"); 
+                            MostrarSoldadosJugador2(listaJugador2);
+                            jugador2PTR soldado_jugador2=SeleccionarSoldadoJugador2(listaJugador2);
+                            seleccionarAccesoriosJugador2(soldado_jugador2, num_combate);
+                            system ("PAUSE"); 
+                            system ("cls");
+
+                            cout<<"El jugador 1 iniciara a la defensiva"<<endl;
+                            system ("PAUSE"); 
+                            MostrarSoldadosJugador1(listaJugador1);
+                            jugador1PTR soldado_jugador1=SeleccionarSoldadoJugador1(listaJugador1);
+                            seleccionarAccesoriosJugador1(soldado_jugador1, num_combate);
+                            system ("PAUSE");
+                            system ("cls");
+                        }
+                        num_combate+=1;
+                        if(prioridad){
+                            prioridad=false;
+                        }else{
+                            prioridad=true;
+                        }
+                    }
+                    
                 }
-            } while (opcionMenuSoldados != '0');
-            break;
+
 
         } //fin switch menu ppal
 
