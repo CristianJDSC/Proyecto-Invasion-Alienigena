@@ -260,21 +260,21 @@ void MostrarEspecies(especiePTR &listaEspecie){
         especiePTR t = listaEspecie;
         cout << "       e s p e c i e s" << endl;
         cout << endl;
-        cout << "--------------------------------------------------------------------------" << endl;
+        cout << "----------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
-        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ENERGIA" << left << setw(20) << setfill(' ') << "SALUD" << left << setw(20) << setfill(' ') << "AMBIENTE" << endl;
+        cout << left << setw(30) << setfill(' ') << "NOMBRE" << left << setw(30) << setfill(' ') << "ENERGIA" << left << setw(30) << setfill(' ') << "SALUD" << left << setw(20) << setfill(' ') << "AMBIENTE" << endl;
         cout << endl;
         while(t != NULL){
             cout << "Especie N" << cont << endl;
-            cout << left << setw(20) << setfill(' ') << t->nombre;
-            cout << left << setw(20) << setfill(' ') << t->energia;
-            cout << left << setw(20) << setfill(' ') << t->salud;
-            cout << left << setw(20) << setfill(' ') << t->ambiente << endl;
+            cout << left << setw(30) << setfill(' ') << t->nombre;
+            cout << left << setw(30) << setfill(' ') << t->energia;
+            cout << left << setw(30) << setfill(' ') << t->salud;
+            cout << left << setw(30) << setfill(' ') << t->ambiente << endl;
             cout << endl;
             t = t->prox;
             cont = cont + 1;
         }
-        cout << "--------------------------------------------------------------------------" << endl;
+        cout << "----------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
     }
 }
@@ -465,11 +465,11 @@ void MostrarAccesorios(accesorioPTR &listaAccesorio){
         cout << endl;
         cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
-        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "TIPO" << left << setw(20) << setfill(' ') << "VALOR" << left << setw(20) << setfill(' ') << "TIPO VALOR" << left << setw(30) << setfill(' ') << "CONSUMO de MIDICLORIAS" << left << setw(30) << setfill(' ') << "VALOR INCIAL de PROTECCION" << endl;
+        cout << left << setw(45) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "TIPO" << left << setw(20) << setfill(' ') << "VALOR" << left << setw(20) << setfill(' ') << "TIPO VALOR" << left << setw(30) << setfill(' ') << "CONSUMO de MIDICLORIAS" << left << setw(30) << setfill(' ') << "VALOR INCIAL de PROTECCION" << endl;
         cout << endl;
         while(t != NULL){
             cout << "Accesorio N" << cont << endl;
-            cout << left << setw(20) << setfill(' ') << t->nombre;
+            cout << left << setw(45) << setfill(' ') << t->nombre;
             cout << left << setw(20) << setfill(' ') << t->tipo;
             cout << left << setw(20) << setfill(' ') << t->valor;
             cout << left << setw(20) << setfill(' ') << t->tipo_valor;
@@ -727,9 +727,23 @@ typedef struct soldado *soldadoPTR;
 soldadoPTR listaSoldados = NULL;
 
 void EmpacarMochila (soldadoPTR p) {
-    cout << endl << "Puedes elegir hasta 5 accesorios para empacar en la mochila!" << endl << endl;;
-    for (int i = 0; i<5; i++ ) {
-        p->mochila[i] = ObtenerAccesorio(listaAccesorio);
+    bool found=false;
+
+    while(!found){
+        cout << endl << "Puedes elegir hasta 5 accesorios para empacar en la mochila! (Tiene que haber como minimo un accesorio de tipo ataque)" << endl << endl;;
+        for (int i = 0; i<5; i++ ) {
+            p->mochila[i] = ObtenerAccesorio(listaAccesorio);
+        }
+        for (int i = 0; i<5; i++ ) {
+            if (p->mochila[i]->tipo=="Ataque"){
+                found=true;
+            }
+        }
+        if(!found){
+            cout<<"ERROR. Debe guardar como minimo un accesorio de ataque. Selecione los 5 accesorios nuevamente"<<endl;
+            system ("PAUSE");
+            system ("cls");
+        }
     }
 }
 
@@ -790,35 +804,35 @@ void MostrarSoldados(soldadoPTR &listaSoldados){
         soldadoPTR t = listaSoldados;
         cout << "       s o l d a d o s   i n t e r g a l a c t i c o s" << endl;
         cout << endl;
-        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
-        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(22) << setfill(' ') << "MOCHILA" << right << setw(47) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
         cout << endl;
         while(t != NULL){
             cout << "Soldado N" << cont << endl;
             cout << left << setw(20) << setfill(' ') << t->nombre;
             MostrarDatosEspecie(t->especie);
             MostrarMochila(t);
-            cout << right << setw(81) << setfill(' ') <<t->salud << right << setw(13) << setfill(' ') <<t->energia;
+            cout << right << setw(106) << setfill(' ') <<t->salud << right << setw(13) << setfill(' ') <<t->energia;
             cout << endl;
             t = t->prox;
             cont = cont + 1;
         }
-        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
     }
 }
 
 void MostrarSoldado (soldadoPTR &t) {
     cout << endl;
-    cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(16) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+    cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(48) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
     cout << endl;
     cout << endl;;
     cout << endl;
     cout << left << setw(20) << setfill(' ') << t->nombre;
     MostrarDatosEspecie(t->especie);
     MostrarMochila(t);
-    cout << left << setw(20) << setfill(' ') <<t->salud << left << setw(20) << setfill(' ') <<t->energia;
+    cout << right << setw(102) << setfill(' ') <<t->salud << right << setw(14) << setfill(' ') <<t->energia;
     cout << endl;
 }
 
@@ -907,23 +921,7 @@ void EliminarSoldado (soldadoPTR &listaSoldados) {
     } 
 }
 
-/*void RecuperarRecursos(soldadoPTR &listaSoldados){
-    soldadoPTR p;
 
-    if (listaSoldados != NULL) {
-        p = listaSoldados;
-        
-
-        while (p != NULL) {
-            if (p->descanso) {
-                p->salud+=(5*p->salud/100);
-                p->energia+=(5*p->energia/100);
-            }
-            
-            p = p->prox;
-        }
-    } 
-}*/
 
 //-----------------------------------------------------------FUNCION DE MODIFICACION GRAL DE ESPECIES------------------------------------------------------------------
 
@@ -1126,8 +1124,7 @@ void ModificarAccesorio (accesorioPTR &listaAccesorio, vector<string> &vector_am
 
 void ModificarMochila (soldadoPTR &p, vector<string> &vector_ambientes) {
     char opc;
-    int vecsize = static_cast<int>(vector_ambientes.size());
-    int posicion;
+    int posicion; int cant_ataque=0;
     bool menu = true, mochila_full=true;
 
     do {
@@ -1162,7 +1159,35 @@ void ModificarMochila (soldadoPTR &p, vector<string> &vector_ambientes) {
             case '2':
             system("cls");
             MostrarMochila(p);
-            cout << "Ingrese el numero N del accesorio que desea desempacar: "; posicion = obtenerEnteroPositivo();
+
+            for (int i = 0; i<5; i++) {
+                if (p->mochila[i]!=NULL){
+                    if (p->mochila[i]->tipo=="Ataque"){
+                        cant_ataque+=1;
+                    }   
+                }
+            }
+            
+            while(true){
+                cout << "Ingrese el numero N del accesorio que desea desempacar: "; posicion = obtenerEnteroPositivo();
+                if (posicion>5){
+                    cout << "Parece que el accesorio N" << posicion << " no existe... Intentelo de nuevo." << endl;
+                }else{
+                    if (cant_ataque==1){
+                        if (p->mochila[posicion-1]!=NULL){
+                            if (p->mochila[posicion-1]->tipo=="Ataque"){
+                                cout<<"No puede desempacar este accesorio debido a que es el unico de ataque guardado en la mochila"<<endl;
+                            }else{
+                                break;
+                            }
+                        }else{
+                            cout<<"No puede desempacar un espacio sin objeto"<<endl;
+                        }
+                        
+                    }
+                }
+            }
+
             for (int i = 0; i<5; i++) {
                 if (i == posicion-1 && p->mochila[i] != NULL) {
                     p->mochila[i] = NULL;
@@ -1170,18 +1195,49 @@ void ModificarMochila (soldadoPTR &p, vector<string> &vector_ambientes) {
                 }
             }
             menu = false; 
+            cant_ataque=0;
             break;
 
             case '3':
             system("cls");
             MostrarMochila(p);
-            cout << "Escriba el numero N del accesorio que desea modificar: "; posicion = obtenerEnteroPositivo();
+
+            for (int i = 0; i<5; i++) {
+                if (p->mochila[i]!=NULL){
+                    if (p->mochila[i]->tipo=="Ataque"){
+                        cant_ataque+=1;
+                    }   
+                }
+            }
+            
+            while(true){
+                cout << "Escriba el numero N del accesorio que desea modificar: "; posicion = obtenerEnteroPositivo();
+                if (posicion>5){
+                    cout << "Parece que el accesorio N" << posicion << " no existe... Intentelo de nuevo." << endl;
+                }else{
+                    if (cant_ataque==1){
+                        if (p->mochila[posicion-1]!=NULL){
+                            if (p->mochila[posicion-1]->tipo=="Ataque"){
+                                cout<<"No puede modificar este accesorio debido a que es el unico de ataque guardado en la mochila"<<endl;
+                            }else{
+                                break;
+                            }
+                        }else{
+                            cout<<"No puede modificar un espacio sin objeto"<<endl;
+                        }
+                        
+                    }
+                    
+                }
+            }
+            
             for (int i = 0; i<5; i++) {
                 if (i == posicion-1 && p->mochila[i] != NULL) {
                     p->mochila[i] = ObtenerAccesorio(listaAccesorio);
                 }
             }
             menu = false; 
+            cant_ataque=0;
             break;
 
             case '0':
@@ -1487,10 +1543,14 @@ struct jugador1 {
     string nombre;
     especiePTR especie;
     int salud;
+    int salud_combate;
     int energia;
+    int energia_combate;
+    int contenedor=0;
     accesorioPTR mochila[5];
-    accesorioPTR mochila_combate[3];
+    vector<accesorioPTR> mochila_combate;
     bool descanso;
+    string estado="Intacto";
     struct jugador1 *prox;
     };
 
@@ -1501,10 +1561,14 @@ struct jugador2 {
     string nombre;
     especiePTR especie;
     int salud;
+    int salud_combate;
     int energia;
+    int energia_combate;
+    int contenedor=0;
     accesorioPTR mochila[5];
-    accesorioPTR mochila_combate[3];
+    vector<accesorioPTR> mochila_combate;
     bool descanso;
+    string estado="Intacto";
     struct jugador2 *prox;
     };
 
@@ -1534,6 +1598,7 @@ void GenerarSoldadosJugador1(soldadoPTR &listaSoldados){
     cout << endl;
 
     for (int i=1; i<4; i++){
+        cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
         limite=ContarSoldados(listaSoldados);
         num_soldado=rand() % limite+1;
         cont=1;
@@ -1541,6 +1606,7 @@ void GenerarSoldadosJugador1(soldadoPTR &listaSoldados){
         s=listaSoldados;
         while(true){
             if(cont==num_soldado){
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 cout << "Soldado N" << i << endl;
                 cout << left << setw(20) << setfill(' ') << s->nombre;
                 MostrarDatosEspecie(s->especie);
@@ -1552,17 +1618,20 @@ void GenerarSoldadosJugador1(soldadoPTR &listaSoldados){
                 } else {
                     ant->prox = s->prox;
                 }
-                
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 jugador1PTR p;
                 p = new (struct jugador1);
                 p->nombre = s->nombre;
                 p->especie = s->especie;
                 p->salud=s->salud;
+                p->salud_combate=s->salud;
                 p->energia=s->energia;
+                p->energia_combate=s->energia;
                 for (int i=0; i<5;i++){
                     p->mochila[i]=s->mochila[i];
                 }
                 p->prox = NULL;
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 if(listaJugador1 == NULL){
                     listaJugador1 = p;
                 }
@@ -1573,7 +1642,9 @@ void GenerarSoldadosJugador1(soldadoPTR &listaSoldados){
                     }
                     t->prox = p;
                 }
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 delete(s);
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 break;
             }
             cont += 1;
@@ -1600,6 +1671,7 @@ void GenerarSoldadosJugador2(soldadoPTR &listaSoldados){
     cout << endl;
 
     for (int i=1; i<4; i++){
+        cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
         limite=ContarSoldados(listaSoldados);
         num_soldado=rand() % limite+1;
         cont=1;
@@ -1618,17 +1690,20 @@ void GenerarSoldadosJugador2(soldadoPTR &listaSoldados){
                 } else {
                     ant->prox = s->prox;
                 }
-                
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 jugador2PTR q;
                 q = new (struct jugador2);
                 q->nombre = s->nombre;
                 q->especie = s->especie;
                 q->salud=s->salud;
+                q->salud_combate=s->salud;
                 q->energia=s->energia;
+                q->energia_combate=s->energia;
                 for (int i=0; i<5;i++){
                     q->mochila[i]=s->mochila[i];
                 }
                 q->prox = NULL;
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 if(listaJugador2 == NULL){
                     listaJugador2 = q;
                 }
@@ -1639,7 +1714,9 @@ void GenerarSoldadosJugador2(soldadoPTR &listaSoldados){
                     }
                     t->prox = q;
                 }
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 delete(s);
+                cout<<"siiiiiiiiiiiiiiiiiii"<<endl;
                 break;
             }
             cont += 1;
@@ -1679,21 +1756,21 @@ void MostrarSoldadosJugador1(jugador1PTR &listaJugador1){
         jugador1PTR t = listaJugador1;
         cout << "       s o l d a d o s   J u g a d o r  1" << endl;
         cout << endl;
-        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << "------------------------------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
-        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << right << setw(16) << setfill(' ') << "ESTADO"<< endl;
         cout << endl;
         while(t != NULL){
             cout << "Soldado N" << cont << endl;
             cout << left << setw(20) << setfill(' ') << t->nombre;
             MostrarDatosEspecie(t->especie);
             MostrarMochilaJugador1(t);
-            cout << right << setw(81) << setfill(' ') <<t->salud << right << setw(13) << setfill(' ') <<t->energia;
+            cout << right << setw(81) << setfill(' ') <<t->salud_combate << right << setw(16) << setfill(' ') <<t->energia_combate<< right << setw(16) << setfill(' ')<<t->estado;
             cout << endl;
             t = t->prox;
             cont = cont + 1;
         }
-        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << "------------------------------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
     
 }
@@ -1713,14 +1790,20 @@ jugador1PTR SeleccionarSoldadoJugador1 (jugador1PTR &listaJugador1) {
             while (p != NULL) {
                 cont++;
                 if (cont == posicion) {
-                    found = true;
-                    cout << "El soldado N"<<cont<<" ha sido sleccionado" << endl;
-                    return p;
+                    if (p->estado=="K.O."){
+                        cout << "El soldado N"<<cont<<" no se puede seleccionar debido a que fue derrotado" << endl;
+                        break;
+                    }else{
+                        found = true;
+                        cout << "El soldado N"<<cont<<" ha sido sleccionado" << endl;
+                        return p;
+                    }
+                    
                 }
                 p = p->prox;
             }
             if (!found) {
-                cout << "El soldado N" << posicion << " no se encuentra registrado" << endl;
+                cout << "El soldado N" << posicion << " no es una opcion valida" << endl;
                 cont=0;
             }
         }
@@ -1730,29 +1813,84 @@ jugador1PTR SeleccionarSoldadoJugador1 (jugador1PTR &listaJugador1) {
 
 void seleccionarAccesoriosJugador1(jugador1PTR &p, int num_combate){
     int posicion, cont;
-    bool found;
-    cout<<"Ahora debe escoger los TRES objetos que llevara a la batalla"<<endl;
+    bool found, repeat, exists_atq;
+    vector <int> posiciones;
+
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << "       m o c h i l a   s o l d a d o              " << endl;
+    cout << endl;
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << left << setw(35) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "TIPO" << left << setw(20) << setfill(' ') << "VALOR" << left << setw(20) << setfill(' ') << "TIPO VALOR" << left << setw(30) << setfill(' ') << "CONSUMO de MIDICLORIAS" << left << setw(30) << setfill(' ') << "VALOR INCIAL de PROTECCION" << endl;
+    cout << endl;
+    for (int k=0;k<5;k++){
+        cout << "Accesorio N" << k+1 << endl;
+        cout << left << setw(35) << setfill(' ') << p->mochila[k]->nombre;
+        cout << left << setw(20) << setfill(' ') << p->mochila[k]->tipo;
+        cout << left << setw(20) << setfill(' ') << p->mochila[k]->valor;
+        cout << left << setw(20) << setfill(' ') << p->mochila[k]->tipo_valor;
+        cout << left << setw(30) << setfill(' ') << p->mochila[k]->energia;
+        cout << left << setw(30) << setfill(' ') << p->mochila[k]->contenedor << endl;
+        cout << endl;
+    }
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout<<endl;
+
+    cout<<"Ahora debe escoger los TRES objetos que llevara a la batalla (debe seleccionar como minimo uno de ataque)"<<endl;
     
-    for (int i=0;i<3;i++){
-        cont=1;
-        found=false;
-        while(!found){
-            cout<<"ingrese el numero N del accesorio N"<<i+1<<" que llevara al combate N"<<num_combate<<": "; posicion = obtenerEnteroPositivo();
-            while (cont!=6) {
-                if (cont == posicion) {
-                    found = true;
-                    cout << "El accesorio N"<<cont<<" ha sido sleccionado" << endl;
-                    p->mochila_combate[i]=p->mochila[cont];
-                    break;
+    exists_atq=false;
+    while(true){
+        for (int i=0;i<3;i++){
+            cont=1;
+            found=false;
+            
+            while(!found){
+                while(true){
+                    repeat=false;
+                    cout<<"ingrese el numero N del accesorio N"<<i+1<<" que llevara al combate N"<<num_combate<<": "; posicion = obtenerEnteroPositivo();
+                    for (int l=0;l<posiciones.size();l++){
+                        if (posiciones[l]==posicion){
+                            repeat=true;
+                        }
+                    }
+                    if(repeat){
+                        cout<<"Este accesorio ya fue seleccionado. Pruebe con otro"<<endl;
+                    }else{
+                        break;
+                    }
                 }
-                cont++;
+                while (cont!=6) {
+                    if (cont == posicion) {
+                        found = true;
+                        cout << "El accesorio N"<<cont<<" ha sido seleccionado" << endl;
+                        p->mochila_combate.push_back(p->mochila[cont-1]);
+                        posiciones.push_back(posicion);
+                        break;
+                    }
+                    cont++;
+                }
+                if (!found) {
+                    cout << "El accesorio N" << posicion << " no se encuentra registrado" << endl;
+                    cont=0;
+                }
             }
-            if (!found) {
-                cout << "El accesorio N" << posicion << " no se encuentra registrado" << endl;
-                cont=0;
+                
+        }
+
+        for (int j=0;j<p->mochila_combate.size();j++){
+            if (p->mochila_combate[j]->tipo=="Ataque"){
+                exists_atq=true;
             }
         }
-        
+        if (exists_atq){
+            break;
+        }else{
+            cout<<"Debe seleccionar como minimo un accesorio de ataque para el combate"<<endl;
+            cout<<"Seleccione los TRES accesorios nuevamente"<<endl;
+            p->mochila_combate.erase(p->mochila_combate.begin(), p->mochila_combate.end());
+            posiciones.erase(posiciones.begin(), posiciones.end());
+        }
     }
 }
 
@@ -1773,21 +1911,21 @@ void MostrarSoldadosJugador2(jugador2PTR &listaJugador2){
         jugador2PTR t = listaJugador2;
         cout << "       s o l d a d o s   J u g a d o r  2" << endl;
         cout << endl;
-        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << "------------------------------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
-        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA" << endl;
+        cout << left << setw(20) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "ESPECIE" << right << setw(16) << setfill(' ') << "MOCHILA" << right << setw(28) << setfill(' ') << "SALUD" << right << setw(16) << setfill(' ') << "ENERGIA"<< right << setw(16) << setfill(' ') << "ESTADO" << endl;
         cout << endl;
         while(t != NULL){
             cout << "Soldado N" << cont << endl;
             cout << left << setw(20) << setfill(' ') << t->nombre;
             MostrarDatosEspecie(t->especie);
             MostrarMochilaJugador2(t);
-            cout << right << setw(81) << setfill(' ') <<t->salud << right << setw(13) << setfill(' ') <<t->energia;
+            cout << right << setw(81) << setfill(' ') <<t->salud_combate << right << setw(16) << setfill(' ') <<t->energia_combate<< right << setw(16) << setfill(' ')<<t->estado;
             cout << endl;
             t = t->prox;
             cont = cont + 1;
         }
-        cout << "------------------------------------------------------------------------------------------------------" << endl;
+        cout << "------------------------------------------------------------------------------------------------------------------------------------" << endl;
         cout << endl;
     
 }
@@ -1807,14 +1945,20 @@ jugador2PTR SeleccionarSoldadoJugador2 (jugador2PTR &listaJugador2) {
             while (q != NULL) {
                 cont++;
                 if (cont == posicion) {
-                    found = true;
-                    cout << "El soldado N"<<cont<<" ha sido sleccionado" << endl;
-                    return q;
+                    if (q->estado=="K.O."){
+                        cout << "El soldado N"<<cont<<" no se puede seleccionar debido a que fue derrotado" << endl;
+                        break;
+                    }else{
+                        found = true;
+                        cout << "El soldado N"<<cont<<" ha sido sleccionado" << endl;
+                        return q;
+                    }
+                    
                 }
                 q = q->prox;
             }
             if (!found) {
-                cout << "El soldado N" << posicion << " no se encuentra registrado" << endl;
+                cout << "El soldado N" << posicion << " no es una opcion valida" << endl;
                 cont=0;
             }
         }
@@ -1824,30 +1968,737 @@ jugador2PTR SeleccionarSoldadoJugador2 (jugador2PTR &listaJugador2) {
 
 void seleccionarAccesoriosJugador2(jugador2PTR &q, int num_combate){
     int posicion, cont;
-    bool found;
+    bool found, repeat, exists_atq;
+    vector <int> posiciones;
+
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << "       m o c h i l a   s o l d a d o              " << endl;
+    cout << endl;
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << left << setw(35) << setfill(' ') << "NOMBRE" << left << setw(20) << setfill(' ') << "TIPO" << left << setw(20) << setfill(' ') << "VALOR" << left << setw(20) << setfill(' ') << "TIPO VALOR" << left << setw(30) << setfill(' ') << "CONSUMO de MIDICLORIAS" << left << setw(30) << setfill(' ') << "VALOR INCIAL de PROTECCION" << endl;
+    cout << endl;
+    for (int k=0;k<5;k++){
+        cout << "Accesorio N" << k+1 << endl;
+        cout << left << setw(35) << setfill(' ') << q->mochila[k]->nombre;
+        cout << left << setw(20) << setfill(' ') << q->mochila[k]->tipo;
+        cout << left << setw(20) << setfill(' ') << q->mochila[k]->valor;
+        cout << left << setw(20) << setfill(' ') << q->mochila[k]->tipo_valor;
+        cout << left << setw(30) << setfill(' ') << q->mochila[k]->energia;
+        cout << left << setw(30) << setfill(' ') << q->mochila[k]->contenedor << endl;
+        cout << endl;
+    }
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
+    cout<<endl;
+
     cout<<"Ahora debe escoger los TRES objetos que llevara a la batalla"<<endl;
     
-    for (int i=0;i<3;i++){
-        cont=1;
-        found=false;
-        while(!found){
-            cout<<"ingrese el numero N del accesorio N"<<i+1<<" que llevara al combate N"<<num_combate<<": "; posicion = obtenerEnteroPositivo();
-            while (cont!=6) {
-                if (cont == posicion) {
-                    found = true;
-                    cout << "El accesorio N"<<cont<<" ha sido sleccionado" << endl;
-                    q->mochila_combate[i]=q->mochila[cont];
-                    break;
+    exists_atq=false;
+    while(true){
+        for (int i=0;i<3;i++){
+            cont=1;
+            found=false;
+            
+            while(!found){
+                while(true){
+                    repeat=false;
+                    cout<<"ingrese el numero N del accesorio N"<<i+1<<" que llevara al combate N"<<num_combate<<": "; posicion = obtenerEnteroPositivo();
+                    for (int l=0;l<posiciones.size();l++){
+                        if (posiciones[l]==posicion){
+                            repeat=true;
+                        }
+                    }
+                    if(repeat){
+                        cout<<"Este accesorio ya fue seleccionado. Pruebe con otro"<<endl;
+                    }else{
+                        break;
+                    }
                 }
-                cont++;
-            }
-            if (!found) {
-                cout << "El accesorio N" << posicion << " no se encuentra registrado" << endl;
-                cont=0;
+                while (cont!=6) {
+                    if (cont == posicion) {
+                        found = true;
+                        cout << "El accesorio N"<<cont<<" ha sido seleccionado" << endl;
+                        q->mochila_combate.push_back(q->mochila[cont-1]);
+                        posiciones.push_back(posicion);
+                        break;
+                    }
+                    cont++;
+                }
+                if (!found) {
+                    cout << "El accesorio N" << posicion << " no se encuentra registrado" << endl;
+                    cont=0;
+                }
             }
         }
         
+        for (int j=0;j<q->mochila_combate.size();j++){
+            if (q->mochila_combate[j]->tipo=="Ataque"){
+                exists_atq=true;
+            }
+        }
+        if (exists_atq){
+            break;
+        }else{
+            cout<<"Debe seleccionar como minimo un accesorio de ataque para el combate"<<endl;
+            cout<<"Seleccione los TRES accesorios nuevamente"<<endl;
+            q->mochila_combate.erase(q->mochila_combate.begin(), q->mochila_combate.end());
+            posiciones.erase(posiciones.begin(), posiciones.end());
+        }
+        
     }
+}
+
+void mostrarInfoCombate_caso1(jugador1PTR &soldado_jugador1, jugador2PTR &soldado_jugador2, bool adaptacionJ1){
+    int posicion1, posicion2; int cont;
+    bool found, correct_type;
+    bool consumir_acc1=false; bool consumir_acc2=false;
+    bool es_defensa=false;
+
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << "       A T A Q U E    j u g a d o r  1              " << endl;
+    cout << endl;
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout<<"Situacion de "<<soldado_jugador1->nombre<<":"<<endl;
+    cout<<"Salud restante: "<<soldado_jugador1->salud_combate <<endl; 
+    cout<<"Contenedor: "<<soldado_jugador1->contenedor<<endl;
+    cout<<"Energia restante: "<<soldado_jugador1->energia_combate <<endl;
+    cout<<"Mochila: "<<"1) "<<soldado_jugador1->mochila_combate[0]->nombre<<endl;
+    for (int i=1;i<soldado_jugador1->mochila_combate.size();i++){
+        cout<< "         " <<i+1<<") "<<soldado_jugador1->mochila_combate[i]->nombre<<endl;
+    }
+    cout<<endl;
+
+    
+    found=false;
+    while (!found){
+        cont=1;
+        correct_type=true;
+        cout<<"Escoja el N accesorio que usara en este turno: "; posicion1 = obtenerEnteroPositivo();
+        while(cont<=soldado_jugador1->mochila_combate.size()){
+            if (posicion1==cont){
+                if(soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Defensa"){
+                    cout << "No puede utilizar el accesorio N" << posicion1 << " en este turno porque es del tipo defensa" << endl;
+                    correct_type=false;
+                    break;
+                }else{
+                    found=true;
+                    correct_type=true;
+                    break;
+                }
+                
+            }
+            cont+=1;
+        }
+        if (!found && correct_type){
+            cout << "El accesorio N" << posicion1 << " no se encuentra registrado" << endl;
+            cont=0;
+        }
+    }
+    
+    
+
+    system ("PAUSE");
+
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << "       D E F E N S A    j u g a d o r  2              " << endl;
+    cout << endl;
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout<<"Situacion de "<<soldado_jugador2->nombre<<":"<<endl;
+    cout<<"Salud restante: "<< soldado_jugador2->salud_combate <<endl;
+    cout<<"Contenedor: "<<soldado_jugador2->contenedor<<endl;
+    cout<<"Energia restante: "<< soldado_jugador2->energia_combate <<endl;
+    cout<<"Mochila: 1) "<< soldado_jugador2->mochila_combate[0]->nombre<<endl;
+    for (int i=1;i<soldado_jugador2->mochila_combate.size();i++){
+        cout<< "         " <<i+1<<") "<< soldado_jugador2->mochila_combate[i]->nombre<<endl;
+    }
+    cout<<endl;
+
+    
+    found=false;
+    while (!found){
+        cont=1;
+        correct_type=true;
+        cout<<"Escoja el N accesorio que usara en este turno (o introduzca 5 para pasar en este turno): "; posicion2 = obtenerEnteroPositivo();
+        while(cont<=soldado_jugador2->mochila_combate.size()){
+            if (posicion2==cont){
+                if(soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Ataque"){
+                    cout << "No puede utilizar el accesorio N" << posicion2 << " en este turno porque es del tipo ataque" << endl;
+                    correct_type=false;
+                    break;
+                }else{
+                    found=true;
+                    correct_type=true;
+                    if(soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Defensa"){
+                        es_defensa=true;
+                    }
+                    break;
+                }
+                
+            }
+            cont+=1;
+        }
+        if (!found && correct_type && posicion2!=5){
+            cout << "El accesorio N" << posicion2 << " no se encuentra registrado" << endl;
+            cont=0;
+        }
+        if (posicion2==5){
+            found=true;
+        }
+    }
+
+    system ("PAUSE");
+    cout<<endl;
+
+    if (posicion2!=5){
+        if (soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Supervivencia"){
+
+            if(soldado_jugador2->mochila_combate[posicion2-1]->tipo_valor=="Salud"){
+                if(soldado_jugador2->salud_combate==soldado_jugador2->salud){
+                    cout<<soldado_jugador2->nombre<<" no ha recuperado nada. Su salud esta al maximo"<<endl;
+                }else{
+                    soldado_jugador2->salud_combate+=soldado_jugador2->mochila_combate[posicion2-1]->valor;
+                    if (soldado_jugador2->salud_combate>soldado_jugador2->salud){
+                        soldado_jugador2->salud_combate=soldado_jugador2->salud;
+                        cout<<soldado_jugador2->nombre<<" ha recuperado toda su salud"<<endl;
+                    }else{
+                        cout<<soldado_jugador2->nombre<<" ha recuperado "<<soldado_jugador2->mochila_combate[posicion2-1]->valor<<" puntos de salud"<<endl;
+                    }
+                }
+                    
+            }else if(soldado_jugador2->mochila_combate[posicion2-1]->tipo_valor=="Energia"){
+                if (soldado_jugador2->energia_combate==soldado_jugador2->energia){
+                    cout<<soldado_jugador2->nombre<<" no ha recuperado nada. Su energia esta al maximo"<<endl;
+                }else{
+                    soldado_jugador2->energia_combate+=soldado_jugador2->mochila_combate[posicion2-1]->valor;
+                    if (soldado_jugador2->energia_combate>soldado_jugador2->energia){
+                        soldado_jugador2->energia_combate=soldado_jugador2->energia;
+                        cout<<soldado_jugador2->nombre<<" ha recuperado toda su energia"<<endl;
+                    }else{
+                        cout<<soldado_jugador2->nombre<<" ha recuperado "<<soldado_jugador2->mochila_combate[posicion2-1]->valor<<" midiclorias de energia"<<endl;
+                    }
+                }
+                    
+            }
+            cout<<soldado_jugador2->nombre<<" ha gastado "<<soldado_jugador2->mochila_combate[posicion2-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+            soldado_jugador2->energia_combate-=soldado_jugador2->mochila_combate[posicion2-1]->energia;
+            cout<<"El accesorio "<<soldado_jugador2->mochila_combate[posicion2-1]->nombre<<" de "<<soldado_jugador2->nombre<<" ha sido consumido"<<endl;
+            consumir_acc2=true;
+            cout<<endl;
+        }
+    }
+    
+
+
+    if (soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Ataque" && !es_defensa){
+        cout<<soldado_jugador1->nombre<<" ha atacado a "<<soldado_jugador2->nombre<<"!"<<endl;
+        if (!adaptacionJ1){
+            cout<<soldado_jugador1->nombre<<" ha perdido "<<soldado_jugador1->salud/3<<" puntos de salud por las circunstancias ambientales"<<endl;
+            soldado_jugador1->salud_combate-=soldado_jugador1->salud/3;
+        }
+        cout<<soldado_jugador1->nombre<<" ha gastado "<<soldado_jugador1->mochila[posicion1-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+        soldado_jugador1->energia_combate-=soldado_jugador1->mochila[posicion1-1]->energia;
+        cout<<endl;
+
+        if (soldado_jugador2->contenedor>0){
+            if (soldado_jugador2->contenedor<soldado_jugador1->mochila[posicion1-1]->valor){
+                soldado_jugador2->salud-=(soldado_jugador1->mochila[posicion1-1]->valor-soldado_jugador2->contenedor);
+                soldado_jugador2->contenedor=0;
+                cout<<"El contenedor de "<<soldado_jugador2->nombre<<" ha perdido toda su salud"<<endl;
+                cout<<soldado_jugador2->nombre<<" ha perdido "<<soldado_jugador1->mochila[posicion1-1]->valor-soldado_jugador2->contenedor<<" puntos de salud"<<endl;
+            }else{
+                soldado_jugador2->contenedor-=soldado_jugador1->mochila[posicion1-1]->valor;
+                cout<<"El contenedor de "<<soldado_jugador2->nombre<<" ha perdido "<<soldado_jugador1->mochila[posicion1-1]->valor<<" puntos de salud"<<endl;
+            }
+        }else{
+            soldado_jugador2->salud_combate-=soldado_jugador1->mochila[posicion1-1]->valor;
+            cout<<soldado_jugador2->nombre<<" ha perdido "<<soldado_jugador1->mochila[posicion1-1]->valor<<" puntos de salud"<<endl;
+        }
+        cout<<endl;
+    }
+
+    //Cuando el jugador que va a la defensiva elige un accesorio
+    if (posicion2!=5){
+        
+        if (soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Defensa"){
+            if (soldado_jugador2->mochila_combate[posicion2-1]->contenedor!=0){
+                soldado_jugador2->contenedor+=soldado_jugador2->mochila_combate[posicion2-1]->contenedor;
+                cout<<"Se ha aniadido al contenedor de "<<soldado_jugador2->nombre<<" una proteccion de "<<soldado_jugador2->mochila_combate[posicion2-1]->contenedor<<" puntos de salud"<<endl;
+                soldado_jugador2->mochila_combate[posicion2-1]->contenedor=0;
+            }
+            cout<<soldado_jugador2->nombre<<" ha recibido una proteccion contra el danio del "<<soldado_jugador2->mochila_combate[posicion2-1]->valor<<"% en este turno"<<endl;
+            cout<<soldado_jugador2->nombre<<" ha gastado "<<soldado_jugador2->mochila_combate[posicion2-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+            soldado_jugador2->energia_combate-=soldado_jugador2->mochila_combate[posicion2-1]->energia;
+            cout<<endl;
+
+            if (soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Ataque"){
+                cout<<soldado_jugador1->nombre<<" ha atacado a "<<soldado_jugador2->nombre<<"!"<<endl;
+                if (!adaptacionJ1){
+                    cout<<soldado_jugador1->nombre<<" ha perdido "<<soldado_jugador1->salud/3<<" puntos de salud por las circunstancias ambientales"<<endl;
+                    soldado_jugador1->salud_combate-=soldado_jugador1->salud/3;
+                }
+                cout<<soldado_jugador1->nombre<<" ha gastado "<<soldado_jugador1->mochila[posicion1-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+                soldado_jugador1->energia_combate-=soldado_jugador1->mochila[posicion1-1]->energia;
+                cout<<endl;
+
+                if (soldado_jugador2->contenedor>0){
+                    if (soldado_jugador2->contenedor<(soldado_jugador1->mochila[posicion1-1]->valor * soldado_jugador2->mochila_combate[posicion2-1]->valor)/100){
+                        soldado_jugador2->salud-=((soldado_jugador1->mochila[posicion1-1]->valor * soldado_jugador2->mochila_combate[posicion2-1]->valor)/100)-soldado_jugador2->contenedor;
+                        soldado_jugador2->contenedor=0;
+                        cout<<"El contenedor de "<<soldado_jugador2->nombre<<" ha perdido toda su salud"<<endl;
+                        cout<<soldado_jugador2->nombre<<" ha perdido "<<((soldado_jugador1->mochila[posicion1-1]->valor * soldado_jugador2->mochila_combate[posicion2-1]->valor)/100)-soldado_jugador2->contenedor<<" puntos de salud"<<endl;
+                    }else{
+                        soldado_jugador2->contenedor-=(soldado_jugador1->mochila[posicion1-1]->valor * soldado_jugador2->mochila_combate[posicion2-1]->valor)/100;
+                        cout<<"El contenedor de "<<soldado_jugador2->nombre<<" ha perdido "<<(soldado_jugador1->mochila[posicion1-1]->valor * soldado_jugador2->mochila_combate[posicion2-1]->valor)/100<<" puntos de salud"<<endl;
+                    }
+                }else{
+                    soldado_jugador2->salud_combate-=(soldado_jugador1->mochila[posicion1-1]->valor * soldado_jugador2->mochila_combate[posicion2-1]->valor)/100;
+                    cout<<soldado_jugador2->nombre<<" ha perdido "<<(soldado_jugador1->mochila[posicion1-1]->valor * soldado_jugador2->mochila_combate[posicion2-1]->valor)/100<<" puntos de salud"<<endl;
+                }
+                cout<<endl;
+            }
+        }
+    }else{
+        cout<<soldado_jugador2->nombre<<" ha decidido no usar ningun accesorio en este turno"<<endl;
+        cout<<endl;
+    }
+    
+
+    if (soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Supervivencia"){
+        
+        if(soldado_jugador1->mochila_combate[posicion1-1]->tipo_valor=="Salud"){
+            if (soldado_jugador1->salud_combate==soldado_jugador1->salud){
+                cout<<soldado_jugador1->nombre<<" no ha recuperado nada. Su salud esta al maximo"<<endl;
+            }else{
+                soldado_jugador1->salud_combate+=soldado_jugador1->mochila_combate[posicion1-1]->valor;
+                if (soldado_jugador1->salud_combate>soldado_jugador1->salud){
+                    soldado_jugador1->salud_combate=soldado_jugador1->salud;
+                    cout<<soldado_jugador1->nombre<<" ha recuperado toda su salud"<<endl;
+                }else{
+                    cout<<soldado_jugador1->nombre<<" ha recuperado "<<soldado_jugador1->mochila_combate[posicion1-1]->valor<<" puntos de salud"<<endl;
+                }
+            }
+            
+        }else if(soldado_jugador1->mochila_combate[posicion1-1]->tipo_valor=="Energia"){
+            if (soldado_jugador1->energia_combate==soldado_jugador1->energia){
+                cout<<soldado_jugador1->nombre<<" no ha recuperado nada. Su energia esta al maximo"<<endl;
+            }else{
+                soldado_jugador1->energia_combate+=soldado_jugador1->mochila_combate[posicion1-1]->valor;
+                if (soldado_jugador1->energia_combate>soldado_jugador1->energia){
+                    soldado_jugador1->energia_combate=soldado_jugador1->energia;
+                    cout<<soldado_jugador1->nombre<<" ha recuperado toda su energia"<<endl;
+                }else{
+                    cout<<soldado_jugador1->nombre<<" ha recuperado "<<soldado_jugador1->mochila_combate[posicion1-1]->valor<<" midiclorias de energia"<<endl;
+                }
+            }
+            
+        }
+
+        cout<<soldado_jugador1->nombre<<" ha gastado "<<soldado_jugador1->mochila_combate[posicion1-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+        soldado_jugador1->energia_combate-=soldado_jugador1->mochila_combate[posicion1-1]->energia;
+        cout<<"El accesorio "<<soldado_jugador1->mochila_combate[posicion1-1]->nombre<<" de "<<soldado_jugador1->nombre<<" ha sido consumido"<<endl;
+        consumir_acc1=true;
+        cout<<endl;
+    }
+
+    
+
+    if (consumir_acc2){
+        soldado_jugador2->mochila_combate.erase(soldado_jugador2->mochila_combate.begin()+posicion2-1);
+    }
+    if (consumir_acc1){
+        soldado_jugador1->mochila_combate.erase(soldado_jugador1->mochila_combate.begin()+posicion1-1);
+    }
+
+
+    system ("PAUSE");
+
+
+}
+
+
+void mostrarInfoCombate_caso2(jugador1PTR &soldado_jugador1, jugador2PTR &soldado_jugador2, bool adaptacionJ2){
+    int posicion1, posicion2; int cont;
+    bool found, correct_type;
+    bool consumir_acc1=false; bool consumir_acc2=false;
+    bool es_defensa=false;
+
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << "       A T A Q U E    j u g a d o r  2              " << endl;
+    cout << endl;
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout<<"Situacion de "<<soldado_jugador2->nombre<<":"<<endl;
+    cout<<"Salud restante: "<< soldado_jugador2->salud_combate <<endl;
+    cout<<"Contenedor: "<< soldado_jugador2->contenedor <<endl;
+    cout<<"Energia restante: "<< soldado_jugador2->energia_combate <<endl;
+    cout<<"Mochila: 1) "<< soldado_jugador2->mochila_combate[0]->nombre<<endl;
+    for (int i=1;i<soldado_jugador2->mochila_combate.size();i++){
+        cout<< "         "<<i+1<<") " << soldado_jugador2->mochila_combate[i]->nombre<<endl;
+    }
+    cout<<endl;
+
+    
+    found=false;
+    while (!found){
+        cont=1;
+        correct_type=true;
+        cout<<"Escoja el N accesorio que usara en este turno: "; posicion2 = obtenerEnteroPositivo();
+        while(cont<=soldado_jugador2->mochila_combate.size()){
+            if (posicion2==cont){
+                if(soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Defensa"){
+                    cout << "No puede utilizar el accesorio N" << posicion2 << " en este turno porque es del tipo defensa" << endl;
+                    correct_type=false;
+                    break;
+                }else{
+                    found=true;
+                    correct_type=true;
+                    break;
+                }
+                
+            }
+            cont+=1;
+        }
+        if (!found && correct_type){
+            cout << "El accesorio N" << posicion2 << " no se encuentra registrado" << endl;
+            cont=0;
+        }
+    }
+
+
+    system ("PAUSE");
+
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout << "       D E F E N S A    j u g a d o r  1              " << endl;
+    cout << endl;
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << endl;
+    cout<<"Situacion de "<<soldado_jugador1->nombre<<":"<<endl;
+    cout<<"Salud restante: "<<soldado_jugador1->salud_combate <<endl; 
+    cout<<"Contenedor: "<< soldado_jugador1->contenedor <<endl;
+    cout<<"Energia restante: "<<soldado_jugador1->energia_combate <<endl;
+    cout<<"Mochila: 1) "<< soldado_jugador1->mochila_combate[0]->nombre<<endl;
+    for (int i=1;i<soldado_jugador1->mochila_combate.size();i++){
+        cout<< "         " <<i+1<<") "<< soldado_jugador1->mochila_combate[i]->nombre<<endl;
+    }
+    cout<<endl;
+
+    
+    found=false;
+    while (!found){
+        cont=1;
+        correct_type=true;
+        cout<<"Escoja el N accesorio que usara en este turno (o introduzca 5 para pasar en este turno): "; posicion1 = obtenerEnteroPositivo();
+        while(cont<=soldado_jugador1->mochila_combate.size()){
+            if (posicion1==cont){
+                if(soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Ataque"){
+                    cout << "No puede utilizar el accesorio N" << posicion1 << " en este turno porque es del tipo ataque" << endl;
+                    correct_type=false;
+                    break;
+                }else{
+                    found=true;
+                    correct_type=true;
+                    if(soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Defensa"){
+                        es_defensa=true;
+                    }
+                    break;
+                }
+                
+            }
+            cont+=1;
+        }
+        if (!found && correct_type && posicion1!=5){
+            cout << "El accesorio N" << posicion1 << " no se encuentra registrado" << endl;
+            cont=0;
+        }
+        if (posicion1==5){
+            found=true;
+        }
+    }
+
+    system ("PAUSE");
+    cout<<endl;
+
+    if (posicion1!=5){
+        if (soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Supervivencia"){
+
+            if(soldado_jugador1->mochila_combate[posicion1-1]->tipo_valor=="Salud"){
+                if(soldado_jugador1->salud_combate==soldado_jugador1->salud){
+                    cout<<soldado_jugador1->nombre<<" no ha recuperado nada. Su salud esta al maximo"<<endl;
+                }else{
+                    soldado_jugador1->salud_combate+=soldado_jugador1->mochila_combate[posicion1-1]->valor;
+                    if (soldado_jugador1->salud_combate>soldado_jugador1->salud){
+                        soldado_jugador1->salud_combate=soldado_jugador1->salud;
+                        cout<<soldado_jugador1->nombre<<" ha recuperado toda su salud"<<endl;
+                    }else{
+                        cout<<soldado_jugador1->nombre<<" ha recuperado "<<soldado_jugador1->mochila_combate[posicion1-1]->valor<<" puntos de salud"<<endl;
+                    }
+                }
+                    
+                    
+            }else if(soldado_jugador1->mochila_combate[posicion1-1]->tipo_valor=="Energia"){
+                if (soldado_jugador1->energia_combate==soldado_jugador1->energia){
+                    cout<<soldado_jugador1->nombre<<" no ha recuperado nada. Su energia esta al maximo"<<endl;
+                }else{
+                    soldado_jugador1->energia_combate+=soldado_jugador1->mochila_combate[posicion1-1]->valor;
+                    if (soldado_jugador1->energia_combate>soldado_jugador1->energia){
+                        soldado_jugador1->energia_combate=soldado_jugador1->energia;
+                        cout<<soldado_jugador1->nombre<<" ha recuperado toda su energia"<<endl;
+                    }else{
+                        cout<<soldado_jugador1->nombre<<" ha recuperado "<<soldado_jugador1->mochila_combate[posicion1-1]->valor<<" midiclorias de energia"<<endl;
+                    }
+                }
+                    
+            }
+            cout<<soldado_jugador1->nombre<<" ha gastado "<<soldado_jugador1->mochila_combate[posicion1-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+            soldado_jugador1->energia_combate-=soldado_jugador1->mochila_combate[posicion1-1]->energia;
+            cout<<"El accesorio "<<soldado_jugador1->mochila_combate[posicion1-1]->nombre<<" de "<<soldado_jugador1->nombre<<" ha sido consumido"<<endl;
+            consumir_acc1=true;
+            cout<<endl;
+        }
+    }
+    
+
+    if (soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Ataque" && !es_defensa){
+        cout<<soldado_jugador2->nombre<<" ha atacado a "<<soldado_jugador1->nombre<<"!"<<endl;
+        if (!adaptacionJ2){
+            cout<<soldado_jugador2->nombre<<" ha perdido "<<soldado_jugador2->salud/3<<" puntos de salud por las circunstancias ambientales"<<endl;
+            soldado_jugador2->salud_combate-=soldado_jugador2->salud/3;
+        }
+        cout<<soldado_jugador2->nombre<<" ha gastado "<<soldado_jugador2->mochila[posicion2-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+        soldado_jugador2->energia_combate-=soldado_jugador2->mochila[posicion2-1]->energia;
+        cout<<endl;
+
+        if (soldado_jugador1->contenedor>0){
+            if (soldado_jugador1->contenedor<soldado_jugador2->mochila[posicion2-1]->valor){
+                soldado_jugador1->salud-=(soldado_jugador2->mochila[posicion2-1]->valor-soldado_jugador1->contenedor);
+                soldado_jugador1->contenedor=0;
+                cout<<"El contenedor de "<<soldado_jugador1->nombre<<" ha perdido toda su salud"<<endl;
+                cout<<soldado_jugador1->nombre<<" ha perdido "<<soldado_jugador2->mochila[posicion2-1]->valor-soldado_jugador1->contenedor<<" puntos de salud"<<endl;
+            }else{
+                soldado_jugador1->contenedor-=soldado_jugador2->mochila[posicion2-1]->valor;
+                cout<<"El contenedor de "<<soldado_jugador1->nombre<<" ha perdido "<<soldado_jugador2->mochila[posicion2-1]->valor<<" puntos de salud"<<endl;
+            }
+        }else{
+            soldado_jugador1->salud_combate-=soldado_jugador2->mochila[posicion2-1]->valor;
+            cout<<soldado_jugador1->nombre<<" ha perdido "<<soldado_jugador2->mochila[posicion2-1]->valor<<" puntos de salud"<<endl;
+        }
+        cout<<endl;
+    }
+
+    //Cuando el jugador que va a la defensiva elige un accesorio
+    if (posicion1!=5){
+
+        
+        if (soldado_jugador1->mochila_combate[posicion1-1]->tipo=="Defensa"){
+            if (soldado_jugador1->mochila_combate[posicion1-1]->contenedor!=0){
+                soldado_jugador1->contenedor+=soldado_jugador1->mochila_combate[posicion1-1]->contenedor;
+                cout<<"Se ha aniadido al contenedor de "<<soldado_jugador1->nombre<<" una proteccion de "<<soldado_jugador1->mochila_combate[posicion1-1]->contenedor<<" puntos de salud"<<endl;
+                soldado_jugador1->mochila_combate[posicion1-1]->contenedor=0;
+            }
+            cout<<soldado_jugador1->nombre<<" ha recibido una proteccion contra el danio del "<<soldado_jugador1->mochila_combate[posicion1-1]->valor<<"% en este turno"<<endl;
+            cout<<soldado_jugador1->nombre<<" ha gastado "<<soldado_jugador1->mochila_combate[posicion1-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+            soldado_jugador1->energia_combate-=soldado_jugador1->mochila_combate[posicion1-1]->energia;
+            cout<<endl;
+
+            if (soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Ataque"){
+                cout<<soldado_jugador2->nombre<<" ha atacado a "<<soldado_jugador1->nombre<<"!"<<endl;
+                if (!adaptacionJ2){
+                    cout<<soldado_jugador2->nombre<<" ha perdido "<<soldado_jugador2->salud/3<<" puntos de salud por las circunstancias ambientales"<<endl;
+                    soldado_jugador2->salud_combate-=soldado_jugador2->salud/3;
+                }
+                cout<<soldado_jugador2->nombre<<" ha gastado "<<soldado_jugador2->mochila[posicion2-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+                soldado_jugador2->energia_combate-=soldado_jugador2->mochila[posicion2-1]->energia;
+                cout<<endl;
+
+                if (soldado_jugador1->contenedor>0){
+                    if (soldado_jugador1->contenedor<(soldado_jugador2->mochila[posicion2-1]->valor * soldado_jugador1->mochila_combate[posicion1-1]->valor)/100){
+                        soldado_jugador1->salud-=((soldado_jugador2->mochila[posicion2-1]->valor * soldado_jugador1->mochila_combate[posicion1-1]->valor)/100)-soldado_jugador1->contenedor;
+                        soldado_jugador1->contenedor=0;
+                        cout<<"El contenedor de "<<soldado_jugador1->nombre<<" ha perdido toda su salud"<<endl;
+                        cout<<soldado_jugador1->nombre<<" ha perdido "<<((soldado_jugador2->mochila[posicion2-1]->valor * soldado_jugador1->mochila_combate[posicion1-1]->valor)/100)-soldado_jugador1->contenedor<<" puntos de salud"<<endl;
+                    }else{
+                        soldado_jugador1->contenedor-=(soldado_jugador2->mochila[posicion2-1]->valor * soldado_jugador1->mochila_combate[posicion1-1]->valor)/100;
+                        cout<<"El contenedor de "<<soldado_jugador1->nombre<<" ha perdido "<<(soldado_jugador2->mochila[posicion2-1]->valor * soldado_jugador1->mochila_combate[posicion1-1]->valor)/100<<" puntos de salud"<<endl;
+                    }
+                }else{
+                    soldado_jugador1->salud_combate-=(soldado_jugador2->mochila[posicion2-1]->valor * soldado_jugador1->mochila_combate[posicion1-1]->valor)/100;
+                    cout<<soldado_jugador1->nombre<<" ha perdido "<<(soldado_jugador2->mochila[posicion2-1]->valor * soldado_jugador1->mochila_combate[posicion1-1]->valor)/100<<" puntos de salud"<<endl;
+                }
+                cout<<endl;
+            }
+        }
+    }else{
+        cout<<soldado_jugador1->nombre<<" ha decidido no usar ningun accesorio en este turno"<<endl;
+        cout<<endl;
+    }
+    
+
+    if (soldado_jugador2->mochila_combate[posicion2-1]->tipo=="Supervivencia"){
+        
+        if(soldado_jugador2->mochila_combate[posicion2-1]->tipo_valor=="Salud"){
+            if (soldado_jugador2->salud_combate==soldado_jugador2->salud){
+                cout<<soldado_jugador2->nombre<<" no ha recuperado nada. Su salud esta al maximo"<<endl;
+            }else{
+                soldado_jugador2->salud_combate+=soldado_jugador2->mochila_combate[posicion2-1]->valor;
+                if (soldado_jugador2->salud_combate>soldado_jugador2->salud){
+                    soldado_jugador2->salud_combate=soldado_jugador2->salud;
+                    cout<<soldado_jugador2->nombre<<" ha recuperado toda su salud"<<endl;
+                }else{
+                    cout<<soldado_jugador2->nombre<<" ha recuperado "<<soldado_jugador2->mochila_combate[posicion2-1]->valor<<" puntos de salud"<<endl;
+                }
+            }
+            
+        }else if(soldado_jugador2->mochila_combate[posicion2-1]->tipo_valor=="Energia"){
+            if (soldado_jugador2->energia_combate==soldado_jugador2->energia){
+                cout<<soldado_jugador2->nombre<<" no ha recuperado nada. Su energia esta al maximo"<<endl;
+            }else{
+                soldado_jugador2->energia_combate+=soldado_jugador2->mochila_combate[posicion2-1]->valor;
+                if (soldado_jugador2->energia_combate>soldado_jugador2->energia){
+                    soldado_jugador2->energia_combate=soldado_jugador2->energia;
+                    cout<<soldado_jugador2->nombre<<" ha recuperado toda su energia"<<endl;
+                }else{
+                    cout<<soldado_jugador2->nombre<<" ha recuperado "<<soldado_jugador2->mochila_combate[posicion2-1]->valor<<" midiclorias de energia"<<endl;
+                }
+            }
+            
+        }
+        
+        cout<<soldado_jugador2->nombre<<" ha gastado "<<soldado_jugador2->mochila_combate[posicion2-1]->energia<<" midiclorias de energia en el uso del accesorio"<<endl;
+        soldado_jugador2->energia_combate-=soldado_jugador2->mochila_combate[posicion2-1]->energia;
+        cout<<"El accesorio "<<soldado_jugador2->mochila_combate[posicion2-1]->nombre<<" de "<<soldado_jugador2->nombre<<" ha sido consumido"<<endl;
+        consumir_acc2=true;
+        cout<<endl;
+    }
+
+
+    if(consumir_acc1){
+        soldado_jugador1->mochila_combate.erase(soldado_jugador1->mochila_combate.begin()+posicion1-1);
+    }
+    if (consumir_acc2){
+        soldado_jugador2->mochila_combate.erase(soldado_jugador2->mochila_combate.begin()+posicion2-1);
+    }
+    system ("PAUSE");
+
+
+}
+
+
+void eliminarAccAcondicionamiento(vector <accesorioPTR> &mochila_combate){
+    vector <accesorioPTR> mochila_nueva;
+    bool found=false;
+    for (int k=0;k<mochila_combate.size();k++){
+        if (mochila_combate[k]->tipo!="Acondicionamiento"){
+            found=true;
+            mochila_nueva.push_back(mochila_combate[k]);
+        }
+    }
+    if (found){
+        mochila_combate=mochila_nueva;
+    }
+    
+}
+
+
+bool ComprobarAcondicionamiento(vector <accesorioPTR> &mochila_combate, string ambiente, string nombre_soldado, char J){
+    vector <accesorioPTR> mochila_nueva;
+    for (int i=0;i<3;i++){
+        if (mochila_combate[i]->tipo_valor==ambiente){
+            cout<<"El soldado "<<nombre_soldado<<" del jugador "<<J<<" ha consumido el accesorio: "<<mochila_combate[i]->nombre<<endl;
+            cout<<"¡Ahora podra luchar en el ambiente "<<ambiente<<" sin perder salud al atacar!"<<endl;
+            eliminarAccAcondicionamiento(mochila_combate);
+            return true;
+        }
+            
+    }
+    cout<<"El soldado "<<nombre_soldado<<" del jugador "<<J<<" no cuenta con un accesorio de acondicionamiento que lo proteja del ambiente "<<ambiente<<endl;
+    eliminarAccAcondicionamiento(mochila_combate);
+    return false;
+}
+
+
+void RecuperarRecursos(jugador1PTR &listaJugador1, jugador2PTR &listaJugador2){
+    jugador1PTR p;
+
+    if (listaJugador1 != NULL) {
+        p = listaJugador1;
+        
+
+        while (p != NULL) {
+            if (p->descanso) {
+                if (p->salud_combate<(p->salud*60)/100){
+                    p->salud_combate+=(15*p->salud/100);
+                }else{
+                    p->salud_combate+=(5*p->salud/100);
+                }
+                
+                p->energia_combate+=(25*p->energia/100);
+            }
+            
+            p = p->prox;
+        }
+    } 
+
+    jugador2PTR q;
+
+    if (listaJugador2 != NULL) {
+        q = listaJugador2;
+        
+
+        while (q != NULL) {
+            if (q->descanso) {
+                if (q->salud_combate<(q->salud*60)/100){
+                    q->salud_combate+=(15*q->salud/100);
+                }else{
+                    q->salud_combate+=(5*q->salud/100);
+                }
+                
+                q->energia_combate+=(25*q->energia/100);
+            }
+            
+            q = q->prox;
+        }
+    } 
+}
+
+bool ComprobarSoldadosJugador1(jugador1PTR listaJugador1){
+    jugador1PTR p;
+
+    if (listaJugador1 != NULL) {
+        p = listaJugador1;
+        
+        while (p != NULL) {
+            if (p->estado!="K.O.") {
+                return false;
+            }
+            
+            p = p->prox;
+        }
+    } 
+    return true;
+}
+
+bool ComprobarSoldadosJugador2(jugador2PTR listaJugador2){
+    jugador2PTR q;
+
+    if (listaJugador2 != NULL) {
+        q = listaJugador2;
+        
+        while (q != NULL) {
+            if (q->estado!="K.O.") {
+                return false;
+            }
+            
+            q = q->prox;
+        }
+    } 
+    return true;
 }
 
 //-------------------------------------------------------------------INICIO DEL MAIN---------------------------------------------------------------------------
@@ -1855,7 +2706,7 @@ int main() {
     //Variables para: especies, ambientes, accesorios, menus...
     int energia, salud, valor, contenedor;
     string nombre, ambiente, tipo, tipo_valor;
-    bool menuTipos; 
+    bool menuTipos, adaptacion_J1, adaptacion_J2; 
     char opcionMenuPrincipal, opcionMenuEspecies, opcionMenuAmbientes, opcionMenuAccesorios, opcionTipoAcc, opcionRecurso, opcionMenuSoldados;
 
     AlmacenarDatosEspecie();
@@ -2094,12 +2945,14 @@ int main() {
                 }else{
                     string ambiente_guerra=vector_ambientes[GenerarAmbiente()];
                     cout<<"La guerra se disputara en el ambiente: "<<ambiente_guerra<<endl;
+                    cout<<"ATENCION! Los soldados que vayan a la guerra sin tener los medios necesarios para luchar en el ambiente "<<ambiente_guerra<<" perderan un tercio de su salud por cada ataque que realicen"<<endl;
+                    cout<<"Si se lleva un accesorio de acondicionamiento incompatible con el ambiente "<<ambiente_guerra<<", este sera consumido"<<endl;
                     system ("PAUSE"); 
                     system ("cls");
                     GenerarSoldadosJugador1(listaSoldados);
                     GenerarSoldadosJugador2(listaSoldados);
                     system ("cls");
-                    cout<<"A continuacion se sorteara el jugador que comenzara atacando. "; system ("PAUSE"); 
+                    cout<<"A continuacion se sortearan los soldados de cada bando y el jugador que comenzara atacando. "; system ("PAUSE"); 
                     bool prioridad=GenerarPrioridad();
 
                     int num_combate=1;
@@ -2107,46 +2960,259 @@ int main() {
                         if (prioridad){
                             cout<<"El primer ataque del combate "<<num_combate<<" sera realizado por el jugador 1"<<endl;
                             system ("PAUSE"); 
-                            MostrarSoldadosJugador1(listaJugador1);
                             jugador1PTR soldado_jugador1=SeleccionarSoldadoJugador1(listaJugador1);
+                            soldado_jugador1->descanso=false;
                             seleccionarAccesoriosJugador1(soldado_jugador1, num_combate);
+                            
                             system ("PAUSE");
                             system ("cls");
                             
                             cout<<"El jugador 2 iniciara a la defensiva"<<endl;
                             system ("PAUSE"); 
-                            MostrarSoldadosJugador2(listaJugador2);
                             jugador2PTR soldado_jugador2=SeleccionarSoldadoJugador2(listaJugador2);
+                            soldado_jugador2->descanso=false;
                             seleccionarAccesoriosJugador2(soldado_jugador2, num_combate);
+                            
+                            RecuperarRecursos(listaJugador1, listaJugador2);
+
                             system ("PAUSE");
                             system ("cls");
+
+                            //cout<<"A continuacion se sortearan nuevamente los soldados entre los dos bandos"<<endl;
+
+                            if (soldado_jugador1->especie->ambiente==ambiente_guerra){
+                                cout<<"¡El soldado "<<soldado_jugador1->nombre<<" del jugador 1 puede luchar en el ambiente "<<ambiente_guerra<<" sin necesidad de un accesorio!"<<endl;
+                                adaptacion_J1=true;
+                                eliminarAccAcondicionamiento(soldado_jugador1->mochila_combate);
+                            }else{
+                                adaptacion_J1=ComprobarAcondicionamiento(soldado_jugador1->mochila_combate, ambiente_guerra, soldado_jugador1->nombre, '1');
+                            }
+                            
+                            if (soldado_jugador2->especie->ambiente==ambiente_guerra){
+                                cout<<"¡El soldado "<<soldado_jugador2->nombre<<" del jugador 2 puede luchar en el ambiente "<<ambiente_guerra<<" sin necesidad de un accesorio!"<<endl;
+                                adaptacion_J2=true;
+                                eliminarAccAcondicionamiento(soldado_jugador2->mochila_combate);
+                            }else{
+                                adaptacion_J2=ComprobarAcondicionamiento(soldado_jugador2->mochila_combate, ambiente_guerra, soldado_jugador2->nombre, '2');
+                            }
+
+
+                            cout<<"E L  C O M B A T E  H A  C O M E N Z A D O"<<endl;
+                            system ("PAUSE");
+                            system ("cls");
+
+                            while(true){
+                                if(prioridad){
+                                    mostrarInfoCombate_caso1(soldado_jugador1, soldado_jugador2, adaptacion_J1);
+
+                                    if ((soldado_jugador1->salud_combate<=0 || soldado_jugador2->energia_combate<=0) && (soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0)){
+                                        cout<<soldado_jugador1->nombre<<" y "<<soldado_jugador2->nombre<<" se han quedado sin salud o energia"<<endl;
+                                        cout<<"Ambos soldados han sido derrotados"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="K.O.";
+                                        break;
+                                    }else if (soldado_jugador1->salud_combate<=0 || soldado_jugador1->energia_combate<=0){
+                                        cout<<soldado_jugador1->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="Descanzo";
+                                        soldado_jugador2->descanso=true;
+                                        if(soldado_jugador2->energia_combate>0){
+                                            soldado_jugador1->energia_combate+=soldado_jugador2->energia_combate;
+                                            cout<<soldado_jugador1->nombre<<" ha absorbido la energia restante de "<<soldado_jugador2->nombre<<endl;
+                                        }
+                                        break;
+                                    }else if(soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0){
+                                        cout<<soldado_jugador2->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador2->estado="K.O.";
+                                        soldado_jugador1->estado="Descanzo";
+                                        soldado_jugador1->descanso=true;
+                                        if(soldado_jugador1->energia_combate>0){
+                                            soldado_jugador2->energia_combate+=soldado_jugador1->energia_combate;
+                                            cout<<soldado_jugador2->nombre<<" ha absorbido la energia restante de "<<soldado_jugador1->nombre<<endl;
+                                        }
+                                        break;
+                                    }
+
+                                    prioridad=false;
+                                    
+
+                                }else{
+                                    mostrarInfoCombate_caso2(soldado_jugador1, soldado_jugador2, adaptacion_J2);
+                                    
+                                    if ((soldado_jugador1->salud_combate<=0 || soldado_jugador2->energia_combate<=0) && (soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0)){
+                                        cout<<soldado_jugador1->nombre<<" y "<<soldado_jugador2->nombre<<" se han quedado sin salud o energia"<<endl;
+                                        cout<<"Ambos soldados han sido derrotados"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="K.O.";
+                                        break;
+                                    }else if (soldado_jugador1->salud_combate<=0 || soldado_jugador1->energia_combate<=0){
+                                        cout<<soldado_jugador1->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="Descanzo";
+                                        soldado_jugador2->descanso=true;
+                                        if(soldado_jugador2->energia_combate>0){
+                                            soldado_jugador1->energia_combate+=soldado_jugador2->energia_combate;
+                                            cout<<soldado_jugador1->nombre<<" ha absorbido la energia restante de "<<soldado_jugador2->nombre<<endl;
+                                        }
+                                        break;
+                                    }else if(soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0){
+                                        cout<<soldado_jugador2->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador2->estado="K.O.";
+                                        soldado_jugador1->estado="Descanzo";
+                                        soldado_jugador1->descanso=true;
+                                        if(soldado_jugador1->energia_combate>0){
+                                            soldado_jugador2->energia_combate+=soldado_jugador1->energia_combate;
+                                            cout<<soldado_jugador2->nombre<<" ha absorbido la energia restante de "<<soldado_jugador1->nombre<<endl;
+                                        }
+                                        break;
+                                    }
+
+                                    prioridad=true;
+                                    
+                                }
+                            }
+                            system ("PAUSE");
+                            system ("cls");
+
+
                         }else{
                             cout<<"El primer ataque del combate "<<num_combate<<" sera realizado por el jugador 2"<<endl;
                             system ("PAUSE"); 
-                            MostrarSoldadosJugador2(listaJugador2);
                             jugador2PTR soldado_jugador2=SeleccionarSoldadoJugador2(listaJugador2);
+                            soldado_jugador2->descanso=false;
                             seleccionarAccesoriosJugador2(soldado_jugador2, num_combate);
+                            
                             system ("PAUSE"); 
                             system ("cls");
 
                             cout<<"El jugador 1 iniciara a la defensiva"<<endl;
                             system ("PAUSE"); 
-                            MostrarSoldadosJugador1(listaJugador1);
                             jugador1PTR soldado_jugador1=SeleccionarSoldadoJugador1(listaJugador1);
+                            soldado_jugador1->descanso=false;
                             seleccionarAccesoriosJugador1(soldado_jugador1, num_combate);
+                            
+                            RecuperarRecursos(listaJugador1, listaJugador2);
+
                             system ("PAUSE");
                             system ("cls");
+
+                            if (soldado_jugador1->especie->ambiente==ambiente_guerra){
+                                cout<<"¡El soldado "<<soldado_jugador1->nombre<<" del jugador 1 puede luchar en el ambiente "<<ambiente_guerra<<" sin necesidad de un accesorio!"<<endl;
+                                adaptacion_J1=true;
+                                eliminarAccAcondicionamiento(soldado_jugador1->mochila_combate);
+                            }else{
+                                adaptacion_J1=ComprobarAcondicionamiento(soldado_jugador1->mochila_combate, ambiente_guerra, soldado_jugador1->nombre, '1');
+                            }
+                            
+                            if (soldado_jugador2->especie->ambiente==ambiente_guerra){
+                                cout<<"¡El soldado "<<soldado_jugador2->nombre<<" del jugador 2 puede luchar en el ambiente "<<ambiente_guerra<<" sin necesidad de un accesorio!"<<endl;
+                                adaptacion_J2=true;
+                                eliminarAccAcondicionamiento(soldado_jugador2->mochila_combate);
+                            }else{
+                                adaptacion_J2=ComprobarAcondicionamiento(soldado_jugador2->mochila_combate, ambiente_guerra, soldado_jugador2->nombre, '2');
+                            }
+
+                            cout<<"E L  C O M B A T E  H A  C O M E N Z A D O"<<endl;
+                            system ("PAUSE");
+                            system ("cls");
+
+                            while(true){
+                                if(prioridad){
+                                    mostrarInfoCombate_caso1(soldado_jugador1, soldado_jugador2, adaptacion_J1);
+                                    
+                                    if ((soldado_jugador1->salud_combate<=0 || soldado_jugador2->energia_combate<=0) && (soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0)){
+                                        cout<<soldado_jugador1->nombre<<" y "<<soldado_jugador2->nombre<<" se han quedado sin salud o energia"<<endl;
+                                        cout<<"Ambos soldados han sido derrotados"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="K.O.";
+                                        break;
+                                    }else if (soldado_jugador1->salud_combate<=0 || soldado_jugador1->energia_combate<=0){
+                                        cout<<soldado_jugador1->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="Descanzo";
+                                        soldado_jugador2->descanso=true;
+                                        if(soldado_jugador2->energia_combate>0){
+                                            soldado_jugador1->energia_combate+=soldado_jugador2->energia_combate;
+                                            cout<<soldado_jugador1->nombre<<" ha absorbido la energia restante de "<<soldado_jugador2->nombre<<endl;
+                                        }
+                                        break;
+                                    }else if(soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0){
+                                        cout<<soldado_jugador2->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador2->estado="K.O.";
+                                        soldado_jugador1->estado="Descanzo";
+                                        soldado_jugador1->descanso=true;
+                                        if(soldado_jugador1->energia_combate>0){
+                                            soldado_jugador2->energia_combate+=soldado_jugador1->energia_combate;
+                                            cout<<soldado_jugador2->nombre<<" ha absorbido la energia restante de "<<soldado_jugador1->nombre<<endl;
+                                        }
+                                        break;
+                                    }
+
+                                    prioridad=false;
+                                    
+
+                                }else{
+                                    mostrarInfoCombate_caso2(soldado_jugador1, soldado_jugador2, adaptacion_J2);
+
+                                    if ((soldado_jugador1->salud_combate<=0 || soldado_jugador2->energia_combate<=0) && (soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0)){
+                                        cout<<soldado_jugador1->nombre<<" y "<<soldado_jugador2->nombre<<" se han quedado sin salud o energia"<<endl;
+                                        cout<<"Ambos soldados han sido derrotados"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="K.O.";
+                                        break;
+                                    }else if (soldado_jugador1->salud_combate<=0 || soldado_jugador1->energia_combate<=0){
+                                        cout<<soldado_jugador1->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador1->estado="K.O.";
+                                        soldado_jugador2->estado="Descanzo";
+                                        soldado_jugador2->descanso=true;
+                                        if(soldado_jugador2->energia_combate>0){
+                                            soldado_jugador1->energia_combate+=soldado_jugador2->energia_combate;
+                                            cout<<soldado_jugador1->nombre<<" ha absorbido la energia restante de "<<soldado_jugador2->nombre<<endl;
+                                        }
+                                        break;
+                                    }else if(soldado_jugador2->salud_combate<=0 || soldado_jugador2->energia_combate<=0){
+                                        cout<<soldado_jugador2->nombre<<" se ha quedado sin salud o energia. Por lo que ha sido derrotado"<<endl;
+                                        soldado_jugador2->estado="K.O.";
+                                        soldado_jugador1->estado="Descanzo";
+                                        soldado_jugador1->descanso=true;
+                                        if(soldado_jugador1->energia_combate>0){
+                                            soldado_jugador2->energia_combate+=soldado_jugador1->energia_combate;
+                                            cout<<soldado_jugador2->nombre<<" ha absorbido la energia restante de "<<soldado_jugador1->nombre<<endl;
+                                        }
+                                        break;
+                                    }
+
+                                    prioridad=true;
+                                    
+                                }
+                            }
+                            system ("PAUSE");
+                            system ("cls");
+
+
                         }
+
                         num_combate+=1;
-                        if(prioridad){
-                            prioridad=false;
-                        }else{
-                            prioridad=true;
+                        
+                        if (ComprobarSoldadosJugador1(listaJugador1) && ComprobarSoldadosJugador2(listaJugador2)){
+                            cout<<"A ningun jugador le quedan soldados para luchar"<<endl;
+                            cout<<"La guerra ha terminado en un empate"<<endl;
+                            break;
+                        }else if(ComprobarSoldadosJugador1(listaJugador1)){
+                            cout<<"Al jugador 1 no le quedan soldados para luchar"<<endl;
+                            cout<<"El jugador 2 ha resultado victorioso!!!"<<endl;
+                            break;
+                        }else if(ComprobarSoldadosJugador2(listaJugador2)){
+                            cout<<"Al jugador 2 no le quedan soldados para luchar"<<endl;
+                            cout<<"El jugador 1 ha resultado victorioso!!!"<<endl;
+                            break;
                         }
+
                     }
                     
                 }
-
+                system ("PAUSE");
+                opcionMenuPrincipal='0';
 
         } //fin switch menu ppal
 
